@@ -1,0 +1,3 @@
+class NumericalMethods:
+    
+    pass
