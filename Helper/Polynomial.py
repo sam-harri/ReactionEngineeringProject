@@ -1,5 +1,5 @@
 from typing import List
-from Term import Term
+from Helper.Term import Term
 
 
 class Polynomial:

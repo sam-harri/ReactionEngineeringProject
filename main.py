@@ -1,4 +1,4 @@
-from Polynomial import Polynomial
+from Helper.Polynomial import Polynomial
 from ReactorEquations import ReactorEquations
 import numpy as np
 import matplotlib.pyplot as plt
