@@ -9,11 +9,13 @@ class ReactorEquations:
     
     @staticmethod
     def levenspielPlot():
-        ydata : List[float] = np.linspace(0,1)
-        xdata : List[float] = [FA0/ReactorEquations.calcDissapearence(conversion) for conversion in ydata]
+        xdata : List[float] = np.linspace(0,1)
+        ydata : List[float] = [FA0/ReactorEquations.calcDissapearence(conversion) for conversion in xdata]
         plt.plot(ydata,xdata)
+        plt.xlabel("Conversion")
+        plt.ylabel("FA0/-Ra")
         plt.show()
-    
+        
     @staticmethod
     def calcDissapearence(conversion : float):
         pass
