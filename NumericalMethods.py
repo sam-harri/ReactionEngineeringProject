@@ -28,6 +28,6 @@ class NumericalMethods:
             k2: float = h * dydx(x0 + 0.5 * h, y + 0.5 * k1)
             k3: float = h * dydx(x0 + 0.5 * h, y + 0.5 * k2)
             k4: float = h * dydx(x0 + h, y + k3)
-            y = y + (1.0 / 6.0)*(k1 + 2 * k2 + 2 * k3 + k4)
-            x = x + h
+            y +=(1.0 / 6.0)*(k1 + 2 * k2 + 2 * k3 + k4)
+            x += h
         return y

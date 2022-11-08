@@ -8,3 +8,5 @@ class ReactorConstants:
     FA0: float = 25 #molA/s
     YI0: float = 0.1 #molI/mol
     U: float = 16.0 #W/m**2K
+    alpha: float = 0 #temp
+    weight : float = 0 #temp

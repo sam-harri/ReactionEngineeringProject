@@ -4,8 +4,14 @@ from ReactorConstants import ReactorConstants
 from typing import List
 
 FA0: float = ReactorConstants.FA0
+alpha: float = ReactorConstants.alpha
+
 
 class ReactorEquations:
+    
+    @staticmethod
+    def pressureDropAnalytical():
+        
     
     @staticmethod
     def levenspielPlot():
@@ -19,3 +25,5 @@ class ReactorEquations:
     @staticmethod
     def calcDissapearence(conversion : float):
         pass
+    
+    

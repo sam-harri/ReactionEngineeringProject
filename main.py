@@ -10,6 +10,11 @@ import math
 
 #main method
 if(__name__ == "__main__"):
+    
+    
+    
+    
+    #messing around with levenspiel
     # xdata : List[float] = np.linspace(0,1)
     # ydata : List[float] = [math.sqrt(x) for x in xdata]
     # plt.plot(ydata,xdata)
