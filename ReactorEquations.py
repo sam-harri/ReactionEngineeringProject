@@ -22,7 +22,7 @@ class ReactorEquations:
         plt.xlabel("Conversion")
         plt.ylabel("FA0/-Ra")
         plt.show()
-        
+    
     @staticmethod
     def calcDissapearence(conversion : float):
         pass
