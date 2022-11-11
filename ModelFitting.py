@@ -17,9 +17,11 @@ yWGS = np.array([6.45, 13.90, 17.81])
 xRWGS = np.array([873.15, 973.15, 1073.15])
 yRWGS = np.array([5.10, 10.63, 13.65])
 
+#0.000041x^2;-0.0600983x^1;22.88680282250014x^0
 xKP = np.array([873.15, 973.15, 1073.15])
 yKP = np.array([1.67, 3.23, 5.61])
 
+#0.0000745x^2;-0.11574935x^1;50.048421226250284x^0
 xKH2O = np.array([873.15, 973.15, 1073.15])
 yKH2O = np.array([5.78, 7.96, 11.63])
 
@@ -98,6 +100,7 @@ axis[1].set_xlabel('Temperature (K)')
 axis[1].set_ylabel('Equilibrium Constant (mol / g-cat*h)')
 
 plt.show()
+
 # plt.figure(figsize=(11, 7))
 
 # plt.scatter(xSRP,ySRP, color='mediumorchid')
@@ -124,4 +127,3 @@ RWGS_estimation = poly_reg_model_RWGS.predict(poly_RWGS.fit_transform([[point]])
 
 # print(poly_reg_model_RWGS.coef_)
 # print(poly_reg_model_RWGS.intercept_)
-
