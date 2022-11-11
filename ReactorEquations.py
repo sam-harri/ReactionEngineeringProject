@@ -11,7 +11,6 @@ weigth: float = ReactorConstants.weight
 K_P : Polynomial = ReactorConstants.KP
 K_H2O : Polynomial = ReactorConstants.KH2O
 
-
 class ReactorEquations:
 
     @staticmethod
