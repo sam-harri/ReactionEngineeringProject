@@ -22,8 +22,8 @@ if(__name__ == "__main__"):
     #                 csv.write(method(T,P,F,PF)) #method would return [Volume, Selectivity, ...]
     
     
-    #After, normalize each parameter (value/max for things we want to maximize, min/value for things we want to minimize) such that they are bounded [0,1]
-    #Add all normlized parameters, reactor setting with highest val is the best overall pick
+    #After, normalize each parameter (value/max for things we want to maximize, min/value for things we want to minimize) such that they are bounded [0,1] and 1 being the best
+    #Add all normlized parameters per reactor, reactor setting with highest val is the best overall pick
     #Parameters can also be weighted differently with coefficients in front of normalized value (ex : 2*NormV + 1*NormSelec, places 2x more importance on reactor size)
     
     pass
