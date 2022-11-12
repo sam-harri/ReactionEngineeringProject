@@ -49,3 +49,12 @@ class ReactorEquations:
         r_wgs : float = k_wgs*(P_CO*P_H2O-P_CO2*P_H2/K_wgs)/(K_P*P_P+K_H2O*P_H2O+1)**2
 
         return r_wgs
+    
+    @staticmethod
+    def ergun(alpha:float, p:float, temp:float, T0:float, FT:float, FT0:float, dW:float):
+        """
+        p is adimensionnal pressure P/P0
+        """       
+        dp : float = -alpha*T0*FT*dW/(2*p*T0*FT0)
+
+        return dp
