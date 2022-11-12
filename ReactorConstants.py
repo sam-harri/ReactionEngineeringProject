@@ -7,13 +7,13 @@ class ReactorConstants:
     #make sure to delcare these as the constants by using the class name everywhere else though
     #ex : FA0: float = ReactorConstants.FA0
     
-    FA0: float = 25 #molA/s
+    FA0: float = 25 #molH2/s à la sortie
     YI0: float = 0.1 #molI/mol
     U: float = 16.0 #W/m**2K
     alpha: float = 0 #temp
     weight : float = 0 #temp
-    kSRP: Polynomial = Polynomial("-0.0002305000x^2;0.51767215x^1;-268.3843301362517x^0")
-    kWGS: Polynomial = Polynomial("-0.0001770000x^2;0.40129510x^1;-208.9976232825012x^0")
-    kRWGS: Polynomial = Polynomial("-0.00012550000x^2;0.28701065x^1;149.82328827375082x^0")
     KP: Polynomial = Polynomial("0.000041x^2;-0.0600983x^1;22.88680282250014x^0")
     KH2O: Polynomial = Polynomial("0.0000745x^2;-0.11574935x^1;50.048421226250284x^0")
+    Deq: float = 0.005 #m diamètre équivalent catalyseur
+    epsilon: float = 0.39 #porosité
+    rho: float = 5740 #kg/m^3 masse volumique catalyseur
