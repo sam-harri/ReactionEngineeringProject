@@ -3,7 +3,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import make_pipeline
 import pandas as pd
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
 x_surf, y_surf = np.meshgrid(
@@ -78,10 +78,6 @@ df = pd.DataFrame([
     [10,800,11499.9]
     ], columns=['pressure', 'temperature', 'enthalpy'])
 
-figure = plt.figure(figsize=(12,8))
-axis = figure.add_subplot(111, projection='3d')
-axis.scatter(df['pressure'],df['temperature'], df['enthalpy'], c='red', marker='o', alpha=0.5)
-
 model = make_pipeline(
     PolynomialFeatures(degree=2),
     LinearRegression()
@@ -90,5 +86,18 @@ model = make_pipeline(
 model.fit(df[['pressure', 'temperature']], df[['enthalpy']])
 
 predictedSurface = model.predict(surfaceX)
-axis.plot_surface(x_surf, y_surf, predictedSurface.reshape(x_surf.shape), alpha=0.3)
+
+figure = plt.figure(figsize=(15,10))
+
+axis = figure.add_subplot(221, projection='3d')
+axis.scatter(df['pressure'],df['temperature'], df['enthalpy'], c='mediumorchid', marker='o', alpha=0.5)
+axis.plot_surface(x_surf, y_surf, predictedSurface.reshape(x_surf.shape), alpha=0.3, color='mediumorchid')
+axis.set_title("Multiple Polynomal Regression Model Hydrogen Enthalpy")
+axis.set_xlabel("Pressure [atm]")
+axis.set_ylabel("Temperature [K]")
+axis.set_zlabel("Enthalpy [J/g]")
+
+axis2 = figure.add_subplot(222, projection='3d')
+
+
 plt.show()
