@@ -95,7 +95,7 @@ axis[1].scatter(xKH2O, yKH2O, color='mediumslateblue')
 axis[1].plot(base, yKP_test, c='mediumorchid', label='KP')
 axis[1].plot(base, yKH2O_test, c='mediumslateblue', label='KH2O')
 axis[1].legend()
-axis[1].set_title("LSS Polynomial Regression Models of Equilibrium Constants")
+axis[1].set_title("LSS Polynomial Regression Models of Adsorption Constants")
 axis[1].set_xlabel('Temperature (K)')
 axis[1].set_ylabel('Equilibrium Constant (mol / g-cat*h)')
 
@@ -119,10 +119,10 @@ plt.show()
 # plt.show()
 
 #test point, copy paste code below and change point for model prediction
-point = 873.15
-SRP_estimation = poly_reg_model_SRP.predict(poly_SRP.fit_transform([[point]]))
-WGS_estimation = poly_reg_model_WGS.predict(poly_WGS.fit_transform([[point]]))
-RWGS_estimation = poly_reg_model_RWGS.predict(poly_RWGS.fit_transform([[point]]))
+# point = 873.15
+# SRP_estimation = poly_reg_model_SRP.predict(poly_SRP.fit_transform([[point]]))
+# WGS_estimation = poly_reg_model_WGS.predict(poly_WGS.fit_transform([[point]]))
+# RWGS_estimation = poly_reg_model_RWGS.predict(poly_RWGS.fit_transform([[point]]))
 
 
 # print(poly_reg_model_RWGS.coef_)
