@@ -55,6 +55,4 @@ class ReactorEquations:
         """
         p is adimensionnal pressure P/P0
         """       
-        dp : float = -alpha*T0*FT*dW/(2*p*T0*FT0)
-
-        return dp
+        return -alpha*T0*FT*dW/(2*p*T0*FT0)
