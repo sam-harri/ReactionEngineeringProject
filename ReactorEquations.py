@@ -16,7 +16,9 @@ class ReactorEquations:
     @staticmethod
     def r_srp(temp: float, C_P: float, C_H2O: float):
         """
-        temp in K
+        (float,float,float->float)
+        Loi de vitesse : reformage du phénol
+        Température en K, concentrations dm^3/L
         """
         k_srp: float = exp(7.63-39960/(8.314*temp))
         K_P: float = K_P.evaluate(temp)
@@ -32,7 +34,9 @@ class ReactorEquations:
     @staticmethod
     def r_wgs(temp: float, C_P: float, C_CO: float, C_H2O: float, C_CO2: float, C_H2: float):
         """
-        temp in K
+        (float,float,float,float,float,float)->float)
+        Loi de vitesse : water-gas shift (réversible)
+        Température en K, concentrations dm^3/L
         """
         k_wgs: float = exp(7.45-40100/(8.314*temp))
         k_rwgs: float = exp(7.03-38840/(8.314*temp))
@@ -53,6 +57,8 @@ class ReactorEquations:
     @staticmethod
     def ergun(alpha:float, p:float, temp:float, T0:float, FT:float, FT0:float, dW:float):
         """
-        p is adimensionnal pressure P/P0
+        (float,float,float,float,float,float)->float)
+        Loi de vitesse : water-gas shift (réversible)
+        Température en K, concentrations dm^3/L
         """       
-        return -alpha*T0*FT*dW/(2*p*T0*FT0)
+        return -alpha*temp*FT*dW/(2*p*T0*FT0)
