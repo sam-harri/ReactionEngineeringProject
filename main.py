@@ -8,14 +8,14 @@ import pandas as pd
 import math
 
 #Lois de vitesses
-r_P:float = -ReactorEquations.r_srp(temp,C_P,C_H2O)
+r_Ph:float = -ReactorEquations.r_srp(temp,C_P,C_H2O)
 r_H2O:float = -5*ReactorEquations.r_srp(temp,C_P,C_H2O)-ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
 r_H2:float = 8*ReactorEquations.r_srp(temp,C_P,C_H2O)+ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
 r_CO:float = 6*ReactorEquations.r_srp(temp,C_P,C_H2O)-ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
 r_CO2:float = ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
 
 #Débit total
-F_T = F_P + F_H2O + F_H2 + F_CO + F_CO2
+F_T = F_Ph + F_H2O + F_H2 + F_CO + F_CO2
 
 #Calculer "a" (surface extérieure du réacteur/kg catalyseur) selon le A_c (cross-sectionnal area)
 
