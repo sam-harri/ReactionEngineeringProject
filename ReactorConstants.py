@@ -13,6 +13,11 @@ class ReactorConstants:
     weight : float = 0 #temp
     KP: Polynomial = Polynomial("0.000041x^2;-0.0600983x^1;22.88680282250014x^0")
     KH2O: Polynomial = Polynomial("0.0000745x^2;-0.11574935x^1;50.048421226250284x^0")
-    D_eq: float = 0.005 #m diamètre équivalent catalyseur
+    D_eq: float = 0.005 #m, diamètre équivalent catalyseur
     phi: float = 0.39 #porosité
-    rho_c: float = 5740 #kg/m^3 masse volumique catalyseur
+    rho_c: float = 5740 #kg/m^3, masse volumique catalyseur
+    T_amb: float = 298.15 #K, température ambiante à l'extérieur du réacteur
+
+
+
+    #CAN WE DELETE "weight" AND CHANGE "FA0" TO "F_H2" ?

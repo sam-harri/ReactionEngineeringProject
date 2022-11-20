@@ -17,6 +17,11 @@ r_CO2:float = ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
 #Débit total
 F_T = F_P+F_H2O+F_H2+F_CO+F_CO2
 
+#Calculer "a" (surface extérieure du réacteur/kg catalyseur) selon le A_c (cross-sectionnal area)
+
+
+
+
 
 #main method
 if(__name__ == "__main__"):
@@ -27,6 +32,13 @@ if(__name__ == "__main__"):
     # feedrateArr = np.linspace(1,10)
     # phenolfractionArr = np.linspace(0,0.1)
     
+
+
+#I THINK WE'LL NEED TO REMOVE "feedrate" FROM THE LOOP, I'M THINKING SOMETHING LIKE A WHILE LOOP UNTIL WE CONVERGE TO F_H2 = 25 MOL/S
+#WE SHOULD HAVE A FOR LOOP FOR THE CROSS SECTIONAL AREA
+
+
+
     # for T in tempArr:
     #    for P in pressureArr:
     #       for F in feedrateArr:

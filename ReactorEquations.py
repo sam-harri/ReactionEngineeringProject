@@ -5,13 +5,15 @@ from ReactorConstants import ReactorConstants
 from typing import List
 from math import sqrt,exp
 
-FA0: float = ReactorConstants.FA0
-weigth: float = ReactorConstants.weight
+FA0 : float = ReactorConstants.FA0
+weigth : float = ReactorConstants.weight
 K_P : Polynomial = ReactorConstants.KP
 K_H2O : Polynomial = ReactorConstants.KH2O
 D_eq : float = ReactorConstants.D_eq
 phi : float = ReactorConstants.phi
 rho_c : float = ReactorConstants.rho_c
+U : float = ReactorConstants.U
+T_amb : ReactorConstants.T_amb
 
 class ReactorEquations:
 
@@ -79,9 +81,30 @@ class ReactorEquations:
         Loi de vitesse : water-gas shift (réversible)
         Température en K, concentrations dm^3/L
         """       
-        dp : float = -alpha*temp*FT*dW/(2*p*T0*FT0)
+        dpdW : float = -alpha*temp*FT/(2*p*T0*FT0)
 
-        return dp
+        return dpdW
+    
+    @staticmethod
+    def conception(r_i:float):
+        """
+        Équation de conception pour un PBR
+        """
+        dFdW : float = r_i
+
+        return dFdW
+
+    @staticmethod
+    def bilan_E(T:float,a:float):
+        """
+        Bilan énergétique pour un PBR à réactions multiples
+        """
+        somme_rxn : float = 
+        somme_debit : float =
+
+        dTdW : float = (somme_rxn-U*a*(T-T_amb))/somme_debit
+
+        return dTdW
     
     @staticmethod
     def concentration(P0:float, P:float, T0:float, T:float, F_i:float, F_T:float):
