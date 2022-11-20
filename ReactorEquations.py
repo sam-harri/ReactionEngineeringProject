@@ -18,7 +18,6 @@ class ReactorEquations:
     @staticmethod
     def r_srp(temp: float, C_P: float, C_H2O: float):
         """
-        (float,float,float->float)
         Loi de vitesse : reformage du phénol
         Température en K, concentrations dm^3/L
         """
@@ -36,7 +35,6 @@ class ReactorEquations:
     @staticmethod
     def r_wgs(temp: float, C_P: float, C_CO: float, C_H2O: float, C_CO2: float, C_H2: float):
         """
-        (float,float,float,float,float,float)->float)
         Loi de vitesse : water-gas shift (réversible)
         Température en K, concentrations dm^3/L
         """
@@ -59,13 +57,11 @@ class ReactorEquations:
     @staticmethod
     def alpha(P:float,temp:float, y_Ph:float, mu:float,A_c:float,P0:float,débit_vol:float):
         """
-        (float,float,float,float,float,float,float)->float)
         Alpha de l'équation d'ergun
         rho_0 est la masse volumique initiale du gaz
         rho_Ph est la masse volumique du PhOH au conditions initiales
         rho_c est la masse volumique des particules de catalyseur
         """
-
         rho_Ph : float = 0.09411*P/(8.314*temp) # 0.09411 kg/mol, masse molaire du PhOH
         x_Ph : float = 94.11/(18.02/y_Ph-18.02+94.11) # y_Ph est la fraction molaire de Ph
         rho_0 : float = rho_Ph/x_Ph
@@ -80,10 +76,49 @@ class ReactorEquations:
     @staticmethod
     def ergun(alpha:float, p:float, temp:float, T0:float, FT:float, FT0:float, dW:float):
         """
-        (float,float,float,float,float,float)->float)
         Loi de vitesse : water-gas shift (réversible)
         Température en K, concentrations dm^3/L
         """       
         dp : float = -alpha*temp*FT*dW/(2*p*T0*FT0)
 
         return dp
+    
+    @staticmethod
+    def concentration(P0:float, P:float, T0:float, T:float, F_i:float, F_T:float):
+        """
+        Calcule la concentration d'une espèce pour une itération
+        """
+        C_T0 : float = P0/(8.314*T0)
+
+        concentration : float = C_T0*(F_i/F_T)*(P/P0)*(T0/T)
+
+        return concentration
+
+    @staticmethod
+    def conversion(F_Ph0:float, F_Ph:float):
+        """
+        Calcule la conversion du PhOH
+        """
+        X_Ph : float = (F_Ph0 - F_Ph)/F_Ph0
+
+        return X_Ph
+
+    @staticmethod
+    def select_inst(r_H2:float,r_CO:float):
+        """
+        Calcule la sélectivité instantée du H2 par rapport au CO
+        On ne peut le faire par rapport au CO2, car il est produit par la même rxn que l'H2
+        """
+        S_H2CO : float = r_H2/r_CO
+
+        return S_H2CO
+
+    @staticmethod
+    def select_glo(F_H2:float,F_CO:float):
+        """
+        Calcule la sélectivité globale du H2 par rapport au CO
+        On ne peut le faire par rapport au CO2, car il est produit par la même rxn que l'H2
+        """
+        S_H2CO : float = F_H2/F_CO
+
+        return S_H2CO
