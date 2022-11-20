@@ -57,13 +57,15 @@ class ReactorEquations:
         return r_wgs
 
     @staticmethod
-    def alpha(P:float,temp:float, y_Ph:float, mu:float,A_c:float,P0:float,débit_vol:float):
+    def alpha(P:float,temp:float, y_Ph:float, mu:float,A_c:float,P0:float,FT:float):
         """
         Alpha de l'équation d'ergun
+        T en K et P en Pa
         rho_0 est la masse volumique initiale du gaz
         rho_Ph est la masse volumique du PhOH au conditions initiales
         rho_c est la masse volumique des particules de catalyseur
         """
+        débit_vol : float = FT*8.314*temp/P
         rho_Ph : float = 0.09411*P/(8.314*temp) # 0.09411 kg/mol, masse molaire du PhOH
         x_Ph : float = 94.11/(18.02/y_Ph-18.02+94.11) # y_Ph est la fraction molaire de Ph
         rho_0 : float = rho_Ph/x_Ph
@@ -76,12 +78,12 @@ class ReactorEquations:
         return alpha
     
     @staticmethod
-    def ergun(alpha:float, p:float, temp:float, T0:float, FT:float, FT0:float):
+    def ergun(alpha:float, p:float, temp:float, T_0:float, F_T:float, F_T0:float):
         """
         Loi de vitesse : water-gas shift (réversible)
         Température en K, concentrations dm^3/L
         """       
-        dpdW : float = -alpha*temp*FT/(2*p*T0*FT0)
+        dpdW : float = -alpha*temp*F_T/(2*p*T_0*F_T0)
 
         return dpdW
     
@@ -95,30 +97,33 @@ class ReactorEquations:
         return dFdW
 
     @staticmethod
-    def bilan_E(T:float,a:float,F_Ph:float,F_H2O:float,F_H2:float,F_CO:float,F_CO2:float,F_N2:float):
+    def bilan_E(T:float,a:float,F_Ph:float,F_H2O:float,F_H2:float,F_CO:float,F_CO2:float,F_N2:float,C_P:float,C_H2O:float,C_CO:float,C_CO2:float,C_H2:float):
         """
-        Bilan énergétique pour un PBR à réactions multiples
+        Bilan énergétique pour un PBR à réactions multiples (Équation T11-1.J du livre Folger (2018))
         T en K
         Les corrélations et les coefficients pour les Cp viennent du livre Felder, Rousseau, Bullard (2019)
         """
-        H_Ph : float =
-        H_H2O : float = 
-        H_H2 : float =
-        H_CO : float =
-        H_CO2 : float =
+        T_R = 25 # deg C
+        K = 273.15
+        
+        H_Ph : float = # H_Ph_Tref + Cp integral
+        H_H2O: float = H_H2O_Tref + 1000*(33.46*10**(-3)*(T-T_R)+0.6880*10**(-5)*1/2*(T-T_R)**2+0.7604*10**(-8)*1/3*(T-T_R)**3-3.593*10**(-12)*1/4*(T-T_R)**4) # J/mol
+        H_H2 : float = H_H2_Tref_ + 1000*(28.84*10**(-3)*(T-T_R)+0.00765*10**(-5)*1/2*(T-T_R)**2+0.3288*10**(-8)*1/3*(T-T_R)**3-0.8698*10**(-12)*1/4*(T-T_R)**4) # J/mol
+        H_CO : float = H_CO_Tref_ + 1000*(28.95*10**(-3)*(T-T_R)+0.4110*10**(-5)*1/2*(T-T_R)**2+0.3548*10**(-8)*1/3*(T-T_R)**3-2.220*10**(-12)*1/4*(T-T_R)**4) # J/mol
+        H_CO2: float = H_CO2_Tref_ + 1000*(36.11*10**(-3)*(T-T_R)+4.233*10**(-5)*1/2*(T-T_R)**2-2.887*10**(-8)*1/3*(T-T_R)**3+7.464*10**(-12)*1/4*(T-T_R)**4) # J/mol
 
-        deltaH_1 : float = 
-        deltaH_2 : float =
+        deltaH_1 : float = 6/1*H_CO + 8/1*H_H2 - 5/1*H_H2O - H_Ph
+        deltaH_2 : float = 1/1*H_CO2 + 1/1*H_H2 - 1/1*H_H2O - H_CO
         
         # Attention, certaines formules ont des unités de K et d'autres de deg C
         Cp_Ph : float = # https://webbook.nist.gov/cgi/cbook.cgi?ID=C108952&Mask=1E9F#Thermo-Gas
-        Cp_H2O : float = 1000*(33.46*10**(-3)+0.6880*10**(-5)*(T+273.15)+0.7604*10**(-8)*(T+273.15)**2-3.593*10**(-12)*(T+273.15)**3) #J/(mol*deg C)
-        Cp_H2 : float = 1000*(28.84*10**(-3)+0.00765*10**(-5)*(T+273.15)+0.3288*10**(-8)*(T+273.15)**2-0.8698*10**(-12)*(T+273.15)**3) #J/(mol*deg C)
-        Cp_CO : float = 1000*(28.95*10**(-3)+0.4110*10**(-5)*(T+273.15)+0.3548*10**(-8)*(T+273.15)**2-2.220*10**(-12)*(T+273.15)**3) #J/(mol*deg C)
-        Cp_CO2 : float = 1000*(36.11*10**(-3)+4.233*10**(-5)*(T+273.15)-2.887*10**(-8)*(T+273.15)**2+7.464*10**(-12)*(T+273.15)**3) #J/(mol*deg C)
-        Cp_N2 : float = 1000*(29.00*10**(-3)+0.2199*10**(-5)*(T+273.15)+0.5723*10**(-8)*(T+273.15)**2-2.871*10**(-12)*(T+273.15)**3) #J/(mol*deg C)
+        Cp_H2O: float = 1000*(33.46*10**(-3)+0.6880*10**(-5)*(T+K)+0.7604*10**(-8)*(T+K)**2-3.593*10**(-12)*(T+K)**3) #J/(mol*deg C)
+        Cp_H2 : float = 1000*(28.84*10**(-3)+0.00765*10**(-5)*(T+K)+0.3288*10**(-8)*(T+K)**2-0.8698*10**(-12)*(T+K)**3) #J/(mol*deg C)
+        Cp_CO : float = 1000*(28.95*10**(-3)+0.4110*10**(-5)*(T+K)+0.3548*10**(-8)*(T+K)**2-2.220*10**(-12)*(T+K)**3) #J/(mol*deg C)
+        Cp_CO2: float = 1000*(36.11*10**(-3)+4.233*10**(-5)*(T+K)-2.887*10**(-8)*(T+K)**2+7.464*10**(-12)*(T+K)**3) #J/(mol*deg C)
+        Cp_N2 : float = 1000*(29.00*10**(-3)+0.2199*10**(-5)*(T+K)+0.5723*10**(-8)*(T+K)**2-2.871*10**(-12)*(T+K)**3) #J/(mol*deg C)
 
-        somme_rxn : float = 
+        somme_rxn : float = ReactorEquations.r_srp(T,C_P,C_H2O)*deltaH_1 + ReactorEquations.r_wgs(T,C_P,C_CO,C_H2O,C_CO2,C_H2)*deltaH_2
         somme_debit : float = F_Ph*Cp_Ph + F_H2O*Cp_H2O + F_H2*Cp_H2 + F_CO*Cp_CO + F_CO2*Cp_CO2 + F_N2*Cp_N2
 
         dTdW : float = (somme_rxn-U*a*(T-T_amb))/somme_debit
@@ -126,13 +131,13 @@ class ReactorEquations:
         return dTdW
     
     @staticmethod
-    def concentration(P0:float, P:float, T0:float, T:float, F_i:float, F_T:float):
+    def concentration(P_0:float, P:float, T_0:float, T:float, F_i:float, F_T:float):
         """
         Calcule la concentration d'une espèce pour une itération
         """
-        C_T0 : float = P0/(8.314*T0)
+        C_T0 : float = P_0/(8.314*T_0)
 
-        concentration : float = C_T0*(F_i/F_T)*(P/P0)*(T0/T)
+        concentration : float = C_T0*(F_i/F_T)*(P/P_0)*(T_0/T)
 
         return concentration
 
