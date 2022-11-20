@@ -76,7 +76,7 @@ class ReactorEquations:
         return alpha
     
     @staticmethod
-    def ergun(alpha:float, p:float, temp:float, T0:float, FT:float, FT0:float, dW:float):
+    def ergun(alpha:float, p:float, temp:float, T0:float, FT:float, FT0:float):
         """
         Loi de vitesse : water-gas shift (réversible)
         Température en K, concentrations dm^3/L
@@ -95,12 +95,31 @@ class ReactorEquations:
         return dFdW
 
     @staticmethod
-    def bilan_E(T:float,a:float):
+    def bilan_E(T:float,a:float,F_Ph:float,F_H2O:float,F_H2:float,F_CO:float,F_CO2:float,F_N2:float):
         """
         Bilan énergétique pour un PBR à réactions multiples
+        T en K
+        Les corrélations et les coefficients pour les Cp viennent du livre Felder, Rousseau, Bullard (2019)
         """
+        H_Ph : float =
+        H_H2O : float = 
+        H_H2 : float =
+        H_CO : float =
+        H_CO2 : float =
+
+        deltaH_1 : float = 
+        deltaH_2 : float =
+        
+        # Attention, certaines formules ont des unités de K et d'autres de deg C
+        Cp_Ph : float = # https://webbook.nist.gov/cgi/cbook.cgi?ID=C108952&Mask=1E9F#Thermo-Gas
+        Cp_H2O : float = 1000*(33.46*10**(-3)+0.6880*10**(-5)*(T+273.15)+0.7604*10**(-8)*(T+273.15)**2-3.593*10**(-12)*(T+273.15)**3) #J/(mol*deg C)
+        Cp_H2 : float = 1000*(28.84*10**(-3)+0.00765*10**(-5)*(T+273.15)+0.3288*10**(-8)*(T+273.15)**2-0.8698*10**(-12)*(T+273.15)**3) #J/(mol*deg C)
+        Cp_CO : float = 1000*(28.95*10**(-3)+0.4110*10**(-5)*(T+273.15)+0.3548*10**(-8)*(T+273.15)**2-2.220*10**(-12)*(T+273.15)**3) #J/(mol*deg C)
+        Cp_CO2 : float = 1000*(36.11*10**(-3)+4.233*10**(-5)*(T+273.15)-2.887*10**(-8)*(T+273.15)**2+7.464*10**(-12)*(T+273.15)**3) #J/(mol*deg C)
+        Cp_N2 : float = 1000*(29.00*10**(-3)+0.2199*10**(-5)*(T+273.15)+0.5723*10**(-8)*(T+273.15)**2-2.871*10**(-12)*(T+273.15)**3) #J/(mol*deg C)
+
         somme_rxn : float = 
-        somme_debit : float =
+        somme_debit : float = F_Ph*Cp_Ph + F_H2O*Cp_H2O + F_H2*Cp_H2 + F_CO*Cp_CO + F_CO2*Cp_CO2 + F_N2*Cp_N2
 
         dTdW : float = (somme_rxn-U*a*(T-T_amb))/somme_debit
 
