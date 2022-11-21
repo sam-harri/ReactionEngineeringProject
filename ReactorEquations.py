@@ -5,8 +5,7 @@ from ReactorConstants import ReactorConstants
 from typing import List
 from math import sqrt,exp
 
-FA0 : float = ReactorConstants.FA0
-weigth : float = ReactorConstants.weight
+F_H2 : float = ReactorConstants.F_H2
 K_P : Polynomial = ReactorConstants.KP
 K_H2O : Polynomial = ReactorConstants.KH2O
 D_eq : float = ReactorConstants.D_eq
@@ -106,7 +105,7 @@ class ReactorEquations:
         T_R = 25 # deg C
         K = 273.15
         
-        H_Ph : float = # H_Ph_Tref + Cp integral
+        H_Ph : float = 0 #temp # H_Ph_Tref + Cp integral
         H_H2O: float = H_H2O_Tref + 1000*(33.46*10**(-3)*(T-T_R)+0.6880*10**(-5)*1/2*(T-T_R)**2+0.7604*10**(-8)*1/3*(T-T_R)**3-3.593*10**(-12)*1/4*(T-T_R)**4) # J/mol
         H_H2 : float = H_H2_Tref_ + 1000*(28.84*10**(-3)*(T-T_R)+0.00765*10**(-5)*1/2*(T-T_R)**2+0.3288*10**(-8)*1/3*(T-T_R)**3-0.8698*10**(-12)*1/4*(T-T_R)**4) # J/mol
         H_CO : float = H_CO_Tref_ + 1000*(28.95*10**(-3)*(T-T_R)+0.4110*10**(-5)*1/2*(T-T_R)**2+0.3548*10**(-8)*1/3*(T-T_R)**3-2.220*10**(-12)*1/4*(T-T_R)**4) # J/mol
@@ -116,7 +115,7 @@ class ReactorEquations:
         deltaH_2 : float = 1/1*H_CO2 + 1/1*H_H2 - 1/1*H_H2O - H_CO
         
         # Attention, certaines formules ont des unités de K et d'autres de deg C
-        Cp_Ph : float = # https://webbook.nist.gov/cgi/cbook.cgi?ID=C108952&Mask=1E9F#Thermo-Gas
+        Cp_Ph : float = 0 #temp # https://webbook.nist.gov/cgi/cbook.cgi?ID=C108952&Mask=1E9F#Thermo-Gas
         Cp_H2O: float = 1000*(33.46*10**(-3)+0.6880*10**(-5)*(T+K)+0.7604*10**(-8)*(T+K)**2-3.593*10**(-12)*(T+K)**3) #J/(mol*deg C)
         Cp_H2 : float = 1000*(28.84*10**(-3)+0.00765*10**(-5)*(T+K)+0.3288*10**(-8)*(T+K)**2-0.8698*10**(-12)*(T+K)**3) #J/(mol*deg C)
         Cp_CO : float = 1000*(28.95*10**(-3)+0.4110*10**(-5)*(T+K)+0.3548*10**(-8)*(T+K)**2-2.220*10**(-12)*(T+K)**3) #J/(mol*deg C)
