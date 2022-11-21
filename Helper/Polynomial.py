@@ -31,3 +31,10 @@ class Polynomial:
         for term in self.termArr:
             term.coefficient /= term.power+1
             term.power += 1
+    
+    @staticmethod
+    def definiteIntegral(poly, lower, upper):
+        for term in poly.termArr:
+            term.coefficient /= term.power+1
+            term.power += 1
+        return poly.evaluate(upper) - poly.evaluate(lower)

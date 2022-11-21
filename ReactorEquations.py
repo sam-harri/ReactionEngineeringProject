@@ -14,6 +14,7 @@ rho_c : float = ReactorConstants.rho_c
 U : float = ReactorConstants.U
 T_amb : float = ReactorConstants.T_amb
 mu: float = ReactorConstants.mu
+Cp_Ph_model : Polynomial = ReactorConstants.Cp_Ph_model
 
 class ReactorEquations:
 
@@ -92,9 +93,7 @@ class ReactorEquations:
         """
         Équation de conception pour un PBR
         """
-        dFdW : float = r_i
-
-        return dFdW
+        return r_i
 
     @staticmethod
     def bilan_E(T:float,a:float,F_Ph:float,F_H2O:float,F_H2:float,F_CO:float,F_CO2:float,F_N2:float,C_P:float,C_H2O:float,C_CO:float,C_CO2:float,C_H2:float):
@@ -106,17 +105,23 @@ class ReactorEquations:
         T_R = 25 # deg C
         K = 273.15
         
-        H_Ph : float = 0 #temp # H_Ph_Tref + Cp integral
+        H_Ph_Tref = 0
+        H_H2O_Tref = 0
+        H_H2_Tref = 0
+        H_CO_Tref = 0
+        H_CO2_Tref = 0
+        
+        H_Ph : float = H_Ph_Tref + Polynomial.definiteIntegral(Cp_Ph_model,T_R, T)
         H_H2O: float = H_H2O_Tref + 1000*(33.46*10**(-3)*(T-T_R)+0.6880*10**(-5)*1/2*(T-T_R)**2+0.7604*10**(-8)*1/3*(T-T_R)**3-3.593*10**(-12)*1/4*(T-T_R)**4) # J/mol
-        H_H2 : float = H_H2_Tref_ + 1000*(28.84*10**(-3)*(T-T_R)+0.00765*10**(-5)*1/2*(T-T_R)**2+0.3288*10**(-8)*1/3*(T-T_R)**3-0.8698*10**(-12)*1/4*(T-T_R)**4) # J/mol
-        H_CO : float = H_CO_Tref_ + 1000*(28.95*10**(-3)*(T-T_R)+0.4110*10**(-5)*1/2*(T-T_R)**2+0.3548*10**(-8)*1/3*(T-T_R)**3-2.220*10**(-12)*1/4*(T-T_R)**4) # J/mol
-        H_CO2: float = H_CO2_Tref_ + 1000*(36.11*10**(-3)*(T-T_R)+4.233*10**(-5)*1/2*(T-T_R)**2-2.887*10**(-8)*1/3*(T-T_R)**3+7.464*10**(-12)*1/4*(T-T_R)**4) # J/mol
+        H_H2 : float = H_H2_Tref + 1000*(28.84*10**(-3)*(T-T_R)+0.00765*10**(-5)*1/2*(T-T_R)**2+0.3288*10**(-8)*1/3*(T-T_R)**3-0.8698*10**(-12)*1/4*(T-T_R)**4) # J/mol
+        H_CO : float = H_CO_Tref + 1000*(28.95*10**(-3)*(T-T_R)+0.4110*10**(-5)*1/2*(T-T_R)**2+0.3548*10**(-8)*1/3*(T-T_R)**3-2.220*10**(-12)*1/4*(T-T_R)**4) # J/mol
+        H_CO2: float = H_CO2_Tref + 1000*(36.11*10**(-3)*(T-T_R)+4.233*10**(-5)*1/2*(T-T_R)**2-2.887*10**(-8)*1/3*(T-T_R)**3+7.464*10**(-12)*1/4*(T-T_R)**4) # J/mol
 
         deltaH_1 : float = 6/1*H_CO + 8/1*H_H2 - 5/1*H_H2O - H_Ph
         deltaH_2 : float = 1/1*H_CO2 + 1/1*H_H2 - 1/1*H_H2O - H_CO
         
         # Attention, certaines formules ont des unités de K et d'autres de deg C
-        Cp_Ph : float = 0 #temp # https://webbook.nist.gov/cgi/cbook.cgi?ID=C108952&Mask=1E9F#Thermo-Gas
+        Cp_Ph : Polynomial = Cp_Ph_model.evaluate(T) # https://webbook.nist.gov/cgi/cbook.cgi?ID=C108952&Mask=1E9F#Thermo-Gas
         Cp_H2O: float = 1000*(33.46*10**(-3)+0.6880*10**(-5)*(T+K)+0.7604*10**(-8)*(T+K)**2-3.593*10**(-12)*(T+K)**3) #J/(mol*deg C)
         Cp_H2 : float = 1000*(28.84*10**(-3)+0.00765*10**(-5)*(T+K)+0.3288*10**(-8)*(T+K)**2-0.8698*10**(-12)*(T+K)**3) #J/(mol*deg C)
         Cp_CO : float = 1000*(28.95*10**(-3)+0.4110*10**(-5)*(T+K)+0.3548*10**(-8)*(T+K)**2-2.220*10**(-12)*(T+K)**3) #J/(mol*deg C)
@@ -135,20 +140,14 @@ class ReactorEquations:
         """
         Calcule la concentration d'une espèce pour une itération
         """
-        C_T0 : float = P_0/(8.314*T_0)
-
-        concentration : float = C_T0*(F_i/F_T)*(P/P_0)*(T_0/T)
-
-        return concentration
+        return (P_0/(8.314*T_0))*(F_i/F_T)*(P/P_0)*(T_0/T)
 
     @staticmethod
     def conversion(F_Ph0:float, F_Ph:float):
         """
         Calcule la conversion du PhOH
         """
-        X_Ph : float = (F_Ph0 - F_Ph)/F_Ph0
-
-        return X_Ph
+        return (F_Ph0 - F_Ph)/F_Ph0
 
     @staticmethod
     def select_inst(r_H2:float,r_CO:float):
@@ -156,9 +155,7 @@ class ReactorEquations:
         Calcule la sélectivité instantée du H2 par rapport au CO
         On ne peut le faire par rapport au CO2, car il est produit par la même rxn que l'H2
         """
-        S_H2CO : float = r_H2/r_CO
-
-        return S_H2CO
+        return r_H2/r_CO
 
     @staticmethod
     def select_glo(F_H2:float,F_CO:float):
@@ -166,6 +163,4 @@ class ReactorEquations:
         Calcule la sélectivité globale du H2 par rapport au CO
         On ne peut le faire par rapport au CO2, car il est produit par la même rxn que l'H2
         """
-        S_H2CO : float = F_H2/F_CO
-
-        return S_H2CO
+        return F_H2/F_CO
