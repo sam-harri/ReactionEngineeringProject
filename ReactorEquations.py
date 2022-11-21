@@ -12,7 +12,8 @@ D_eq : float = ReactorConstants.D_eq
 phi : float = ReactorConstants.phi
 rho_c : float = ReactorConstants.rho_c
 U : float = ReactorConstants.U
-T_amb : ReactorConstants.T_amb
+T_amb : float = ReactorConstants.T_amb
+mu: float = ReactorConstants.mu
 
 class ReactorEquations:
 
@@ -56,14 +57,14 @@ class ReactorEquations:
         return r_wgs
 
     @staticmethod
-    def alpha(P:float,temp:float, y_Ph:float, mu:float,A_c:float,P0:float,FT:float):
+    def alpha(P:float,temp:float, y_Ph:float, A_c:float,P0:float,FT:float):
         """
         Alpha de l'équation d'ergun
         T en K et P en Pa
-        rho_0 est la masse volumique initiale du gaz
-        rho_Ph est la masse volumique du PhOH au conditions initiales
-        rho_c est la masse volumique des particules de catalyseur
-        """
+        # """
+        # rho_0 est la masse volumique initiale du gaz
+        # rho_Ph est la masse volumique du PhOH au conditions initiales
+        # rho_c est la masse volumique des particules de catalyseur
         débit_vol : float = FT*8.314*temp/P
         rho_Ph : float = 0.09411*P/(8.314*temp) # 0.09411 kg/mol, masse molaire du PhOH
         x_Ph : float = 94.11/(18.02/y_Ph-18.02+94.11) # y_Ph est la fraction molaire de Ph
