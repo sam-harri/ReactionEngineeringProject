@@ -126,7 +126,7 @@ predictedSurface_H2O = model_H2O.predict(surfaceX)
 
 figure = plt.figure(figsize=(15,10))
 
-axis = figure.add_subplot(221, projection='3d')
+axis = figure.add_subplot(121, projection='3d')
 axis.scatter(df_H2['pressure'],df_H2['temperature'], df_H2['enthalpy'], c='mediumorchid', marker='o', alpha=0.5)
 axis.plot_surface(x_surf, y_surf, predictedSurface_H2.reshape(x_surf.shape), alpha=0.3, color='mediumorchid')
 axis.set_title("Multiple Polynomal Regression Model of H2 Enthalpy")
@@ -134,7 +134,7 @@ axis.set_xlabel("Pressure [atm]")
 axis.set_ylabel("Temperature [K]")
 axis.set_zlabel("Enthalpy [J/g]")
 
-axis2 = figure.add_subplot(222, projection='3d')
+axis2 = figure.add_subplot(122, projection='3d')
 axis2.scatter(df_H2O['pressure'],df_H2O['temperature'], df_H2O['enthalpy'], c='royalblue', marker='o', alpha=0.5)
 axis2.plot_surface(x_surf, y_surf, predictedSurface_H2O.reshape(x_surf.shape), alpha=0.3, color='royalblue')
 axis2.set_title("Multiple Polynomal Regression Model of H20 Enthalpy")
