@@ -12,9 +12,9 @@ D_eq : float = ReactorConstants.D_eq
 phi : float = ReactorConstants.phi
 rho_c : float = ReactorConstants.rho_c
 U : float = ReactorConstants.U
-T_amb : float = ReactorConstants.T_amb
 mu: float = ReactorConstants.mu
 Cp_Ph_model : Polynomial = ReactorConstants.Cp_Ph_model
+Cp_calo : float = ReactorConstants.Cp_calo
 
 class ReactorEquations:
 
@@ -96,11 +96,12 @@ class ReactorEquations:
         return r_i
 
     @staticmethod
-    def bilan_E(T:float,a:float,F_Ph:float,F_H2O:float,F_H2:float,F_CO:float,F_CO2:float,F_N2:float,C_P:float,C_H2O:float,C_CO:float,C_CO2:float,C_H2:float):
+    def bilan_E(T:float,Ta:float,a:float,F_Ph:float,F_H2O:float,F_H2:float,F_CO:float,F_CO2:float,F_N2:float,C_P:float,C_H2O:float,C_CO:float,C_CO2:float,C_H2:float):
         """
         Bilan énergétique pour un PBR à réactions multiples (Équation T11-1.J du livre Folger (2018))
         T en K
         Les corrélations et les coefficients pour les Cp viennent du livre Felder, Rousseau, Bullard (2019)
+        Le "a" est la surface d'échange de chaleur par kg de catalyseur
         """
         T_R = 298.15
         K = 273.15
@@ -126,10 +127,22 @@ class ReactorEquations:
         somme_rxn : float = ReactorEquations.r_srp(T,C_P,C_H2O)*deltaH_1 + ReactorEquations.r_wgs(T,C_P,C_CO,C_H2O,C_CO2,C_H2)*deltaH_2
         somme_debit : float = F_Ph*Cp_Ph + F_H2O*Cp_H2O + F_H2*Cp_H2 + F_CO*Cp_CO + F_CO2*Cp_CO2 + F_N2*Cp_N2
 
-        dTdW : float = (somme_rxn-U*a*(T-T_amb))/somme_debit
+        dTdW : float = (somme_rxn-U*a*(T-Ta))/somme_debit
 
         return dTdW
     
+    @staticmethod
+    def échange_chal(T:float,Ta:float,a:float,m:float):
+        """
+        Équation différentielle pour le fluide caloporteur
+        Le "a" est la surface d'échange de chaleur par kg de catalyseur
+        Le "m" est le débit massique de fluide caloporteur
+        """
+
+        dTadW : float = U*a*(T-Ta)/(m*Cp_calo)
+
+        return dTadW
+
     @staticmethod
     def concentration(P_0:float, P:float, T_0:float, T:float, F_i:float, F_T:float):
         """
