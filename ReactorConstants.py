@@ -17,3 +17,4 @@ class ReactorConstants:
     phi: float = 0.39 #porosité
     rho_c: float = 5740 #kg/m^3, masse volumique catalyseur
     T_amb: float = 298.15 #K, température ambiante à l'extérieur du réacteur
+    mu: float = 24.59*10**(-6) #Pa*s, viscosité à 700 deg C, 1 atm, 10% mol N2 et 90% mol H2O
