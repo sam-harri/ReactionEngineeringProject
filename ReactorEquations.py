@@ -58,7 +58,7 @@ class ReactorEquations:
         return r_wgs
 
     @staticmethod
-    def alpha(P:float,temp:float, y_Ph:float, A_c:float,P0:float,FT:float):
+    def alpha(P:float,temp:float, x_Ph:float, A_c:float,P0:float,FT:float):
         """
         Alpha de l'équation d'ergun
         T en K et P en Pa
@@ -68,8 +68,8 @@ class ReactorEquations:
         # rho_c est la masse volumique des particules de catalyseur
         débit_vol : float = FT*8.314*temp/P
         rho_Ph : float = 0.09411*P/(8.314*temp) # 0.09411 kg/mol, masse molaire du PhOH
-        x_Ph : float = 94.11/(18.02/y_Ph-18.02+94.11) # y_Ph est la fraction molaire de Ph
-        rho_0 : float = rho_Ph/x_Ph
+        w_Ph : float = x_Ph*94.11/(x_Ph*94.11+(0.9-x_Ph)*18.02+1.401) # x_Ph est la fraction molaire de Ph
+        rho_0 : float = rho_Ph/w_Ph
         u : float = débit_vol/A_c
         G : float = rho_0*u
 
