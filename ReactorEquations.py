@@ -102,20 +102,15 @@ class ReactorEquations:
         T en K
         Les corrélations et les coefficients pour les Cp viennent du livre Felder, Rousseau, Bullard (2019)
         """
-        T_R = 25 # deg C
+        T_R = 298.15
         K = 273.15
         
-        H_Ph_Tref = 0
-        H_H2O_Tref = 0
-        H_H2_Tref = 0
-        H_CO_Tref = 0
-        H_CO2_Tref = 0
-        
-        H_Ph : float = H_Ph_Tref + Polynomial.definiteIntegral(Cp_Ph_model,T_R, T)
-        H_H2O: float = H_H2O_Tref + 1000*(33.46*10**(-3)*(T-T_R)+0.6880*10**(-5)*1/2*(T-T_R)**2+0.7604*10**(-8)*1/3*(T-T_R)**3-3.593*10**(-12)*1/4*(T-T_R)**4) # J/mol
-        H_H2 : float = H_H2_Tref + 1000*(28.84*10**(-3)*(T-T_R)+0.00765*10**(-5)*1/2*(T-T_R)**2+0.3288*10**(-8)*1/3*(T-T_R)**3-0.8698*10**(-12)*1/4*(T-T_R)**4) # J/mol
-        H_CO : float = H_CO_Tref + 1000*(28.95*10**(-3)*(T-T_R)+0.4110*10**(-5)*1/2*(T-T_R)**2+0.3548*10**(-8)*1/3*(T-T_R)**3-2.220*10**(-12)*1/4*(T-T_R)**4) # J/mol
-        H_CO2: float = H_CO2_Tref + 1000*(36.11*10**(-3)*(T-T_R)+4.233*10**(-5)*1/2*(T-T_R)**2-2.887*10**(-8)*1/3*(T-T_R)**3+7.464*10**(-12)*1/4*(T-T_R)**4) # J/mol
+        # Enthalpies de référence à 25 deg C posées = 0
+        H_Ph : float = Polynomial.definiteIntegral(Cp_Ph_model,T_R, T)
+        H_H2O: float = 1000*(33.46*10**(-3)*(T-T_R)+0.6880*10**(-5)*1/2*(T-T_R)**2+0.7604*10**(-8)*1/3*(T-T_R)**3-3.593*10**(-12)*1/4*(T-T_R)**4) # J/mol
+        H_H2 : float = 1000*(28.84*10**(-3)*(T-T_R)+0.00765*10**(-5)*1/2*(T-T_R)**2+0.3288*10**(-8)*1/3*(T-T_R)**3-0.8698*10**(-12)*1/4*(T-T_R)**4) # J/mol
+        H_CO : float = 1000*(28.95*10**(-3)*(T-T_R)+0.4110*10**(-5)*1/2*(T-T_R)**2+0.3548*10**(-8)*1/3*(T-T_R)**3-2.220*10**(-12)*1/4*(T-T_R)**4) # J/mol
+        H_CO2: float = 1000*(36.11*10**(-3)*(T-T_R)+4.233*10**(-5)*1/2*(T-T_R)**2-2.887*10**(-8)*1/3*(T-T_R)**3+7.464*10**(-12)*1/4*(T-T_R)**4) # J/mol
 
         deltaH_1 : float = 6/1*H_CO + 8/1*H_H2 - 5/1*H_H2O - H_Ph
         deltaH_2 : float = 1/1*H_CO2 + 1/1*H_H2 - 1/1*H_H2O - H_CO
