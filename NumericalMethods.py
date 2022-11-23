@@ -19,7 +19,7 @@ class NumericalMethods:
             middle = (upper + lower)/2
             new = func(middle)
         return middle
-            
+
     @staticmethod
     def rungeKutta(x0: float, y0: float, x: float, h: float, dydx: Callable):
         """

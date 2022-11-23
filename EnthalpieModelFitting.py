@@ -123,7 +123,6 @@ model_H2O = make_pipeline(
 model_H2O.fit(df_H2O[['pressure', 'temperature']], df_H2O[['enthalpy']])
 predictedSurface_H2O = model_H2O.predict(surfaceX)
 
-
 figure = plt.figure(figsize=(15,10))
 
 axis = figure.add_subplot(121, projection='3d')

@@ -172,3 +172,10 @@ class ReactorEquations:
         On ne peut le faire par rapport au CO2, car il est produit par la même rxn que l'H2
         """
         return F_H2/F_CO
+    
+    @staticmethod
+    def dimentionlizeReactor(temperature: float, inletPressure: float, feedRate: float, phenolFraction: float):
+        """
+        returns volume, selectivity, and conversion
+        """
+        pass
