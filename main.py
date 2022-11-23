@@ -55,25 +55,25 @@ if(__name__ == "__main__"):
     crossSectionAreaRange = np.linspace(0.1, 1, num=5)
     
     # testing the addition of rows to the data
-    rawDF.loc[len(rawDF.index)] = [0,600,1,30,0.75,0.10,110,12,0.85]
-    rawDF.loc[len(rawDF.index)] = [1,650,2,33,1.00,0.05,100,11,0.90]
+    # rawDF.loc[len(rawDF.index)] = [0,600,1,30,0.75,0.10,110,12,0.85]
+    # rawDF.loc[len(rawDF.index)] = [1,650,2,33,1.00,0.05,100,11,0.90]
     
-    # run = 0
-    # for inletTemperature in temperatureRange:
-    #     for inletPressure in inletPressureRange:
-    #         for feedRate in feedRateRange:
-    #             for phenolFraction in phenolFractionRange:
-    #                 for crossSectionalArea in crossSectionAreaRange:
-    #                     volume, selectivity, conversion = ReactorEquations.dimentionlizeReactor(inletTemperature,inletPressure,feedRate,phenolFraction, crossSectionalArea)
-    #                     rawDF.loc[len(rawDF.index)] = [inletTemperature,
-    #                                             inletPressure,
-    #                                             feedRate,
-    #                                             phenolFraction,
-    #                                             crossSectionalArea,
-    #                                             volume,
-    #                                             selectivity,
-    #                                             conversion]
-    #                     run +=1
+    run = 0
+    for inletTemperature in temperatureRange:
+        for inletPressure in inletPressureRange:
+            for feedRate in feedRateRange:
+                for phenolFraction in phenolFractionRange:
+                    for crossSectionalArea in crossSectionAreaRange:
+                        volume, selectivity, conversion = ReactorEquations.dimentionlizeReactor(inletTemperature,inletPressure,feedRate,phenolFraction, crossSectionalArea)
+                        rawDF.loc[len(rawDF.index)] = [inletTemperature,
+                                                inletPressure,
+                                                feedRate,
+                                                phenolFraction,
+                                                crossSectionalArea,
+                                                volume,
+                                                selectivity,
+                                                conversion]
+                        run +=1
     
     
     rawDF.to_csv("rawReactorData.csv", encoding='utf-8', index=False)
@@ -97,8 +97,6 @@ if(__name__ == "__main__"):
     })
     
     normDF.to_csv("processedReactorData.csv", encoding='utf-8', index=False)
-    
-    print("Done :)")
     
     
     #After, normalize each parameter (value/max for things we want to maximize, min/value for things we want to minimize) such that they are bounded [0,1] and 1 being the best
