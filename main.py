@@ -1,13 +1,9 @@
-from Helper.Polynomial import Polynomial
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import make_pipeline
 from ReactorEquations import ReactorEquations
-from NumericalMethods import NumericalMethods
-from ReactorConstants import ReactorConstants
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-import math
-import csv
-
 
 # #Lois de vitesses
 # r_Ph:float = -ReactorEquations.r_srp(temp,C_P,C_H2O)
@@ -21,20 +17,14 @@ import csv
 
 # Calculer "a" (surface extérieure du réacteur/kg catalyseur) selon le A_c (cross-sectionnal area)
 
-
-
-
-
 #main method
 if(__name__ == "__main__"):
     
-    csvData = open("rawReactorData.csv", 'w')
-    csvData.truncate()
-    csvData.close()
-    
-    csvData = open("processedReactorData.csv", 'w')
-    csvData.truncate()
-    csvData.close()
+    csvFiles = ["rawReactorData.csv", "processedReactorData.csv", "fullReactorData.csv"]
+    for csvData in csvFiles:
+        tmp = open(csvData, "w")
+        tmp.truncate()
+        tmp.close()
     
     rawDF = pd.DataFrame(
         {"Run" : [],
@@ -64,17 +54,18 @@ if(__name__ == "__main__"):
             for feedRate in feedRateRange:
                 for phenolFraction in phenolFractionRange:
                     for crossSectionalArea in crossSectionAreaRange:
-                        volume, selectivity, conversion = ReactorEquations.dimentionlizeReactor(inletTemperature,inletPressure,feedRate,phenolFraction, crossSectionalArea)
-                        rawDF.loc[len(rawDF.index)] = [inletTemperature,
-                                                inletPressure,
-                                                feedRate,
-                                                phenolFraction,
-                                                crossSectionalArea,
-                                                volume,
-                                                selectivity,
-                                                conversion]
+                        volume, selectivity, conversion = ReactorEquations.dimentionlizeReactor(inletTemperature,inletPressure,feedRate,phenolFraction,crossSectionalArea)
+                        rawDF.loc[len(rawDF.index)] = [
+                            run,
+                            inletTemperature,
+                            inletPressure,
+                            feedRate,
+                            phenolFraction,
+                            crossSectionalArea,
+                            volume,
+                            selectivity,
+                            conversion]
                         run +=1
-    
     
     rawDF.to_csv("rawReactorData.csv", encoding='utf-8', index=False)
     
@@ -95,10 +86,23 @@ if(__name__ == "__main__"):
         "Normalized Conversion" : normConvArr,
         "Overall Efficiency" : overallRating 
     })
-    
     normDF.to_csv("processedReactorData.csv", encoding='utf-8', index=False)
     
+    fullDF = pd.merge(rawDF, normDF, on="Run", how="inner")
+    fullDF.to_csv("fullReactorData.csv", encoding="utf-8", index=False)
     
-    #After, normalize each parameter (value/max for things we want to maximize, min/value for things we want to minimize) such that they are bounded [0,1] and 1 being the best
-    #Add all normlized parameters per reactor, reactor setting with highest val is the best overall pick
-    #Parameters can also be weighted differently with coefficients in front of normalized value (ex : 2*NormV + 1*NormSelec, places 2x more importance on reactor size)
+    reactorModel = make_pipeline(
+        PolynomialFeatures(degree=3),
+        LinearRegression()
+    )
+    
+    reactorModel.fit(fullDF[[
+        "Temperature",
+        "Pressure",
+        "Feed Rate",
+        "Phenol Fraction",
+        "Cross Sectional Area"]],
+        fullDF[['Overall Efficiency']])
+    
+    print(fullDF)
+    #https://stackoverflow.com/questions/54859865/scikit-learn-order-of-coefficients-for-multiple-linear-regression-and-polynomial
