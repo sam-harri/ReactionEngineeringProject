@@ -16,7 +16,7 @@ import csv
 # #Débit total
 # F_T = F_Ph + F_H2O + F_H2 + F_CO + F_CO2
 
-# Calculer "a" (surface extérieure du réacteur/kg catalyseur) selon le A_c (cross-sectionnal area)
+# Calculer le "a" (surface extérieure du réacteur/kg catalyseur) selon le A_c (cross-sectionnal area)
 
 #main method
 if(__name__ == "__main__"):
