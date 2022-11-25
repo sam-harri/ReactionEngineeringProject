@@ -4,6 +4,7 @@ from sklearn.pipeline import make_pipeline
 from ReactorEquations import ReactorEquations
 import numpy as np
 import pandas as pd
+import csv
 
 # #Lois de vitesses
 # r_Ph:float = -ReactorEquations.r_srp(temp,C_P,C_H2O)
@@ -20,7 +21,12 @@ import pandas as pd
 #main method
 if(__name__ == "__main__"):
     
-    csvFiles = ["rawReactorData.csv", "processedReactorData.csv", "fullReactorData.csv"]
+    csvFiles = [
+        "CsvData/rawReactorData.csv",
+        "CsvData/processedReactorData.csv",
+        "CsvData/fullReactorData.csv",
+        "CsvData/tempRawReactorData.csv"]
+    
     for csvData in csvFiles:
         tmp = open(csvData, "w")
         tmp.truncate()
@@ -44,9 +50,17 @@ if(__name__ == "__main__"):
     phenolFractionRange = np.linspace(0.01, 0.1, num=5)
     crossSectionAreaRange = np.linspace(0.1, 1, num=5)
     
-    # testing the addition of rows to the data
-    # rawDF.loc[len(rawDF.index)] = [0,600,1,30,0.75,0.10,110,12,0.85]
-    # rawDF.loc[len(rawDF.index)] = [1,650,2,33,1.00,0.05,100,11,0.90]
+    
+    # with open("CsvData/tempRawReactorData.csv", "wb") as tempData:
+    #     tempData.write(",".join([0,600,1,30,0.75,0.10,110,12,0.85]))
+    #     tempData.write("\n")
+    #     tempData.write(",".join([1,650,2,33,1.00,0.05,100,11,0.90]))
+    #     tempData.write("\n")
+    # # testing the addition of rows to the data
+    # a = [0,600,1,30,0.75,0.10,110,12,0.85]
+    # rawDF.loc[len(rawDF.index)] = a
+    # b = [1,650,2,33,1.00,0.05,100,11,0.90]
+    # rawDF.loc[len(rawDF.index)] = b
     
     run = 0
     for inletTemperature in temperatureRange:
@@ -55,8 +69,7 @@ if(__name__ == "__main__"):
                 for phenolFraction in phenolFractionRange:
                     for crossSectionalArea in crossSectionAreaRange:
                         volume, selectivity, conversion = ReactorEquations.dimentionlizeReactor(inletTemperature,inletPressure,feedRate,phenolFraction,crossSectionalArea)
-                        rawDF.loc[len(rawDF.index)] = [
-                            run,
+                        tmp = np.array([run,
                             inletTemperature,
                             inletPressure,
                             feedRate,
@@ -64,10 +77,12 @@ if(__name__ == "__main__"):
                             crossSectionalArea,
                             volume,
                             selectivity,
-                            conversion]
+                            conversion])
+                        np.savetxt('myfile.csv', tmp, delimiter=',')
+                        rawDF.loc[len(rawDF.index)] = tmp
                         run +=1
     
-    rawDF.to_csv("rawReactorData.csv", encoding='utf-8', index=False)
+    rawDF.to_csv("CsvData/rawReactorData.csv", encoding='utf-8', index=False)
     
     volMin = rawDF["Volume"].min()
     selMax = rawDF["Selectivity"].max()
@@ -86,10 +101,10 @@ if(__name__ == "__main__"):
         "Normalized Conversion" : normConvArr,
         "Overall Efficiency" : overallRating 
     })
-    normDF.to_csv("processedReactorData.csv", encoding='utf-8', index=False)
+    normDF.to_csv("CsvData/processedReactorData.csv", encoding='utf-8', index=False)
     
     fullDF = pd.merge(rawDF, normDF, on="Run", how="inner")
-    fullDF.to_csv("fullReactorData.csv", encoding="utf-8", index=False)
+    fullDF.to_csv("CsvData/fullReactorData.csv", encoding="utf-8", index=False)
     
     reactorModel = make_pipeline(
         PolynomialFeatures(degree=3),
@@ -104,5 +119,26 @@ if(__name__ == "__main__"):
         "Cross Sectional Area"]],
         fullDF[['Overall Efficiency']])
     
+    
+    
     print(fullDF)
-    #https://stackoverflow.com/questions/54859865/scikit-learn-order-of-coefficients-for-multiple-linear-regression-and-polynomial
+    
+    # t_surf, p_surf, fr_surf, pf_surf, csa_surf = np.meshgrid(
+    #     temperatureRange,
+    #     inletPressureRange,
+    #     feedRateRange,
+    #     phenolFractionRange,
+    #     crossSectionAreaRange,
+    # )
+    
+    # surfaceReactor = pd.DataFrame({
+    #     "Temperature" : t_surf.ravel(),
+    #     "Pressure" : p_surf.ravel(),
+    #     "Feed Rate" : fr_surf.ravel(),
+    #     "Phenol Fraction" : fr_surf.ravel(),
+    #     "Cross Sectional Area" : csa_surf.ravel()
+    # })
+    
+    # predictedReactorData = reactorModel.fit(surfaceReactor)
+    
+    #https://stackoverflow.com/questions/54859865/scikit-learn-order-of-coefficients-for-multiple-linear-regression-and-polynomia
