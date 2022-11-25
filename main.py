@@ -39,7 +39,7 @@ if(__name__ == "__main__"):
     )
     
     temperatureRange = np.linspace(600,800, num=5)
-    inletPressureRange = np.linspace(1,10, num=5)
+    inletPressureRange = np.linspace(1,5, num=5)
     feedRateRange = np.linspace(32,500,num=5)
     phenolFractionRange = np.linspace(0.01, 0.1, num=5)
     crossSectionAreaRange = np.linspace(0.1, 1, num=5)
