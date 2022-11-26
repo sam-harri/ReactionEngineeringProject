@@ -66,11 +66,11 @@ class ReactorEquations:
         x_Ph est la fraction molaire initiale de Ph
         """
         # rho_0 est la masse volumique initiale du gaz
-        # rho_Ph est la masse volumique du PhOH au conditions initiales
+        # rho_Ph est la masse volumique du PhOH aux conditions initiales
         # rho_c est la masse volumique des particules de catalyseur
         débit_vol : float = FT*8.314*temp/P
         rho_Ph : float = 0.09411*P0/(8.314*T0) # 0.09411 kg/mol, masse molaire du PhOH
-        w_Ph : float = x_Ph*94.11/(x_Ph*94.11+(0.9-x_Ph)*18.02+1.401) # w_Ph est la fraction massique de Ph
+        w_Ph : float = x_Ph*94.11/(x_Ph*94.11+(0.9-x_Ph)*18.02+1.401) # w_Ph est la fraction massique initiale de Ph
         rho_0 : float = rho_Ph/w_Ph
         u : float = débit_vol/A_c
         G : float = rho_0*u
