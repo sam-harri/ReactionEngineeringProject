@@ -3,7 +3,7 @@ import numpy as np
 from Helper.Polynomial import Polynomial
 from ReactorConstants import ReactorConstants
 from typing import List
-from math import sqrt,exp
+from math import sqrt,exp,pi
 
 F_H2 : float = ReactorConstants.F_H2
 K_P : Polynomial = ReactorConstants.KP
@@ -57,6 +57,37 @@ class ReactorEquations:
 
         return r_wgs
 
+# Lois de vitesses globales
+@staticmethod
+def r_Ph(temp:float,C_P:float,C_H2O:float):
+    r_Ph:float = -ReactorEquations.r_srp(temp,C_P,C_H2O)
+    return r_Ph
+
+@staticmethod
+def r_H2O(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
+    r_H2O:float = -5*ReactorEquations.r_srp(temp,C_P,C_H2O)-ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
+    return r_H2O
+
+@staticmethod
+def r_H2(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
+    r_H2:float = 8*ReactorEquations.r_srp(temp,C_P,C_H2O)+ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
+    return r_H2
+
+@staticmethod
+def r_CO(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
+    r_CO:float = 6*ReactorEquations.r_srp(temp,C_P,C_H2O)-ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
+    return r_CO
+
+@staticmethod
+def r_CO2(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
+    r_CO2:float = ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
+    return r_CO2
+
+
+
+
+
+
     @staticmethod
     def alpha(P:float,T0:float, temp:float, x_Ph:float, A_c:float,P0:float,FT:float):
         """
@@ -89,6 +120,14 @@ class ReactorEquations:
         dpdW : float = -alpha*temp*F_T/(2*p*T_0*F_T0)
 
         return dpdW
+
+
+
+
+
+
+
+
     
     @staticmethod
     def conception(r_i:float):
@@ -96,6 +135,13 @@ class ReactorEquations:
         Équation de conception pour un PBR
         """
         return r_i
+
+
+
+
+
+
+
 
     @staticmethod
     def bilan_E(T:float,Ta:float,a:float,F_Ph:float,F_H2O:float,F_H2:float,F_CO:float,F_CO2:float,F_N2:float,C_P:float,C_H2O:float,C_CO:float,C_CO2:float,C_H2:float):
@@ -146,11 +192,40 @@ class ReactorEquations:
         return dTadW
 
     @staticmethod
+    def a(Ac:float):
+        """
+        Surface d'échange de chaleur par kg de catalyseur
+        """
+
+        D : float = Ac*4/pi
+        rho_bulk : float = rho_c*(1-phi)
+        a : float = 4/(D*rho_bulk)
+
+        return a
+
+
+
+
+
+
+
+
+
+    @staticmethod
     def concentration(P_0:float, P:float, T_0:float, T:float, F_i:float, F_T:float):
         """
         Calcule la concentration d'une espèce pour une itération
         """
         return (P_0/(8.314*T_0))*(F_i/F_T)*(P/P_0)*(T_0/T)
+
+    @staticmethod
+    def F_T(F_Ph:float,F_H2O:float,F_H_2:float,F_CO:float,F_CO2:float):
+        """
+        Débit total
+        """
+        F_T : float = F_Ph + F_H2O + F_H_2 + F_CO + F_CO2 
+
+        return F_T
 
     @staticmethod
     def conversion(F_Ph0:float, F_Ph:float):
@@ -175,6 +250,14 @@ class ReactorEquations:
         """
         return F_H2/F_CO
     
+
+
+
+
+
+
+
+
     @staticmethod
     def dimentionlizeReactor(temperature: float, inletPressure: float, feedRate: float, phenolFraction: float):
         """
