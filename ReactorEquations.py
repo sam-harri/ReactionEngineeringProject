@@ -244,9 +244,9 @@ def select_glo(F_H2:float,F_CO:float):
 
 
 
-    @staticmethod
-    def dimentionlizeReactor(temperature: float, inletPressure: float, feedRate: float, phenolFraction: float):
-        """
-        returns volume, selectivity, and conversion
-        """
-        pass
+@staticmethod
+def dimentionlizeReactor(temperature: float, inletPressure: float, feedRate: float, phenolFraction: float):
+    """
+    returns volume, selectivity, and conversion
+    """
+    pass
