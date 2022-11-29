@@ -31,9 +31,7 @@ class ReactorEquations:
         P_P: float = C_P*8.314*temp
         P_H2O: float = C_H2O*8.314*temp
 
-        r_srp: float = k_srp*K_P*K_H2O*(P_P*P_H2O**5)/(K_P*P_P+K_H2O*P_H2O+1)**2
-
-        return r_srp
+        return k_srp*K_P*K_H2O*(P_P*P_H2O**5)/(K_P*P_P+K_H2O*P_H2O+1)**2
 
     @staticmethod
     def r_wgs(temp: float, C_P: float, C_CO: float, C_H2O: float, C_CO2: float, C_H2: float):
@@ -53,73 +51,61 @@ class ReactorEquations:
         P_CO2: float = C_CO2*8.314*temp
         P_H2: float = C_H2*8.314*temp
 
-        r_wgs: float = k_wgs*(P_CO*P_H2O-P_CO2*P_H2/K_wgs)/(K_P*P_P+K_H2O*P_H2O+1)**2
-
-        return r_wgs
+        return k_wgs*(P_CO*P_H2O-P_CO2*P_H2/K_wgs)/(K_P*P_P+K_H2O*P_H2O+1)**2
 
 # Lois de vitesses globales
 @staticmethod
 def r_Ph(temp:float,C_P:float,C_H2O:float):
-    r_Ph:float = -ReactorEquations.r_srp(temp,C_P,C_H2O)
-    return r_Ph
+    return -ReactorEquations.r_srp(temp,C_P,C_H2O)
 
 @staticmethod
 def r_H2O(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
-    r_H2O:float = -5*ReactorEquations.r_srp(temp,C_P,C_H2O)-ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
-    return r_H2O
+    return -5*ReactorEquations.r_srp(temp,C_P,C_H2O)-ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
 
 @staticmethod
 def r_H2(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
-    r_H2:float = 8*ReactorEquations.r_srp(temp,C_P,C_H2O)+ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
-    return r_H2
+    return 8*ReactorEquations.r_srp(temp,C_P,C_H2O)+ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
 
 @staticmethod
 def r_CO(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
-    r_CO:float = 6*ReactorEquations.r_srp(temp,C_P,C_H2O)-ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
-    return r_CO
+    return 6*ReactorEquations.r_srp(temp,C_P,C_H2O)-ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
 
 @staticmethod
 def r_CO2(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
-    r_CO2:float = ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
-    return r_CO2
+    return ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
 
 
 
 
 
+@staticmethod
+def alpha(P:float,T0:float, temp:float, x_Ph:float, A_c:float,P0:float,FT:float):
+    """
+    Alpha de l'équation d'ergun
+    T0 en K et P0 en Pa (conditions initiales)
+    temp et P sont les valeurs à l'itération
+    x_Ph est la fraction molaire initiale de Ph
+    """
+    # rho_0 est la masse volumique initiale du gaz
+    # rho_Ph est la masse volumique du PhOH aux conditions initiales
+    # rho_c est la masse volumique des particules de catalyseur
+    débit_vol : float = FT*8.314*temp/P
+    rho_Ph : float = 0.09411*P0/(8.314*T0) # 0.09411 kg/mol, masse molaire du PhOH
+    w_Ph : float = x_Ph*94.11/(x_Ph*94.11+(0.9-x_Ph)*18.02+1.401) # w_Ph est la fraction massique initiale de Ph
+    rho_0 : float = rho_Ph/w_Ph
+    u : float = débit_vol/A_c
+    G : float = rho_0*u
 
-    @staticmethod
-    def alpha(P:float,T0:float, temp:float, x_Ph:float, A_c:float,P0:float,FT:float):
-        """
-        Alpha de l'équation d'ergun
-        T0 en K et P0 en Pa (conditions initiales)
-        temp et P sont les valeurs à l'itération
-        x_Ph est la fraction molaire initiale de Ph
-        """
-        # rho_0 est la masse volumique initiale du gaz
-        # rho_Ph est la masse volumique du PhOH aux conditions initiales
-        # rho_c est la masse volumique des particules de catalyseur
-        débit_vol : float = FT*8.314*temp/P
-        rho_Ph : float = 0.09411*P0/(8.314*T0) # 0.09411 kg/mol, masse molaire du PhOH
-        w_Ph : float = x_Ph*94.11/(x_Ph*94.11+(0.9-x_Ph)*18.02+1.401) # w_Ph est la fraction massique initiale de Ph
-        rho_0 : float = rho_Ph/w_Ph
-        u : float = débit_vol/A_c
-        G : float = rho_0*u
+    beta : float = -G*(1-phi)/(rho_0*1*D_eq*phi**3)*(150*(1-phi)*mu/D_eq+1.75*G)
+    return 2*beta/((1-phi)*A_c*rho_c*P0)
 
-        beta : float = -G*(1-phi)/(rho_0*1*D_eq*phi**3)*(150*(1-phi)*mu/D_eq+1.75*G)
-        alpha : float = 2*beta/((1-phi)*A_c*rho_c*P0)
-
-        return alpha
-    
-    @staticmethod
-    def ergun(alpha:float, p:float, temp:float, T_0:float, F_T:float, F_T0:float):
-        """
-        Loi de vitesse : water-gas shift (réversible)
-        Température en K, concentrations dm^3/L
-        """       
-        dpdW : float = -alpha*temp*F_T/(2*p*T_0*F_T0)
-
-        return dpdW
+@staticmethod
+def ergun(alpha:float, p:float, temp:float, T_0:float, F_T:float, F_T0:float):
+    """
+    Loi de vitesse : water-gas shift (réversible)
+    Température en K, concentrations dm^3/L
+    """       
+    return -alpha*temp*F_T/(2*p*T_0*F_T0)
 
 
 
@@ -143,65 +129,65 @@ def r_CO2(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
 
 
 
-    @staticmethod
-    def bilan_E(T:float,Ta:float,a:float,F_Ph:float,F_H2O:float,F_H2:float,F_CO:float,F_CO2:float,F_N2:float,C_P:float,C_H2O:float,C_CO:float,C_CO2:float,C_H2:float):
-        """
-        Bilan énergétique pour un PBR à réactions multiples (Équation T11-1.J du livre Folger (2018))
-        T en K
-        Les corrélations et les coefficients pour les Cp viennent du livre Felder, Rousseau, Bullard (2019)
-        Le "a" est la surface d'échange de chaleur par kg de catalyseur
-        """
-        T_R = 298.15
-        K = 273.15
-        
-        # Enthalpies de formation à 25 deg C et 1 atm en phase gazeuse (Source: Felder et Rousseau)
-        H_Ph : float = -90800 + Polynomial.definiteIntegral(Cp_Ph_model,T_R, T) # J/mol
-        H_H2O: float = -241830 + 1000*(33.46*10**(-3)*(T-T_R)+0.6880*10**(-5)*1/2*(T-T_R)**2+0.7604*10**(-8)*1/3*(T-T_R)**3-3.593*10**(-12)*1/4*(T-T_R)**4) # J/mol
-        H_H2 : float = 0 + 1000*(28.84*10**(-3)*(T-T_R)+0.00765*10**(-5)*1/2*(T-T_R)**2+0.3288*10**(-8)*1/3*(T-T_R)**3-0.8698*10**(-12)*1/4*(T-T_R)**4) # J/mol
-        H_CO : float = -110520 + 1000*(28.95*10**(-3)*(T-T_R)+0.4110*10**(-5)*1/2*(T-T_R)**2+0.3548*10**(-8)*1/3*(T-T_R)**3-2.220*10**(-12)*1/4*(T-T_R)**4) # J/mol
-        H_CO2: float = -393500 + 1000*(36.11*10**(-3)*(T-T_R)+4.233*10**(-5)*1/2*(T-T_R)**2-2.887*10**(-8)*1/3*(T-T_R)**3+7.464*10**(-12)*1/4*(T-T_R)**4) # J/mol
-
-        deltaH_1 : float = 6/1*H_CO + 8/1*H_H2 - 5/1*H_H2O - H_Ph
-        deltaH_2 : float = 1/1*H_CO2 + 1/1*H_H2 - 1/1*H_H2O - H_CO
-        
-        # Attention, certaines formules ont des unités de K et d'autres de deg C
-        Cp_Ph : Polynomial = Cp_Ph_model.evaluate(T) # https://webbook.nist.gov/cgi/cbook.cgi?ID=C108952&Mask=1E9F#Thermo-Gas
-        Cp_H2O: float = 1000*(33.46*10**(-3)+0.6880*10**(-5)*(T+K)+0.7604*10**(-8)*(T+K)**2-3.593*10**(-12)*(T+K)**3) #J/(mol*deg C)
-        Cp_H2 : float = 1000*(28.84*10**(-3)+0.00765*10**(-5)*(T+K)+0.3288*10**(-8)*(T+K)**2-0.8698*10**(-12)*(T+K)**3) #J/(mol*deg C)
-        Cp_CO : float = 1000*(28.95*10**(-3)+0.4110*10**(-5)*(T+K)+0.3548*10**(-8)*(T+K)**2-2.220*10**(-12)*(T+K)**3) #J/(mol*deg C)
-        Cp_CO2: float = 1000*(36.11*10**(-3)+4.233*10**(-5)*(T+K)-2.887*10**(-8)*(T+K)**2+7.464*10**(-12)*(T+K)**3) #J/(mol*deg C)
-        Cp_N2 : float = 1000*(29.00*10**(-3)+0.2199*10**(-5)*(T+K)+0.5723*10**(-8)*(T+K)**2-2.871*10**(-12)*(T+K)**3) #J/(mol*deg C)
-
-        somme_rxn : float = ReactorEquations.r_srp(T,C_P,C_H2O)*deltaH_1 + ReactorEquations.r_wgs(T,C_P,C_CO,C_H2O,C_CO2,C_H2)*deltaH_2
-        somme_debit : float = F_Ph*Cp_Ph + F_H2O*Cp_H2O + F_H2*Cp_H2 + F_CO*Cp_CO + F_CO2*Cp_CO2 + F_N2*Cp_N2
-
-        dTdW : float = (somme_rxn-U*a*(T-Ta))/somme_debit
-
-        return dTdW
+@staticmethod
+def bilan_E(T:float,Ta:float,a:float,F_Ph:float,F_H2O:float,F_H2:float,F_CO:float,F_CO2:float,F_N2:float,C_P:float,C_H2O:float,C_CO:float,C_CO2:float,C_H2:float):
+    """
+    Bilan énergétique pour un PBR à réactions multiples (Équation T11-1.J du livre Folger (2018))
+    T en K
+    Les corrélations et les coefficients pour les Cp viennent du livre Felder, Rousseau, Bullard (2019)
+    Le "a" est la surface d'échange de chaleur par kg de catalyseur
+    """
+    T_R = 298.15
+    K = 273.15
     
-    @staticmethod
-    def échange_chal(T:float,Ta:float,a:float,m:float):
-        """
-        Équation différentielle pour le fluide caloporteur
-        Le "a" est la surface d'échange de chaleur par kg de catalyseur
-        Le "m" est le débit massique de fluide caloporteur
-        """
+    # Enthalpies de formation à 25 deg C et 1 atm en phase gazeuse (Source: Felder et Rousseau)
+    H_Ph : float = -90800 + Polynomial.definiteIntegral(Cp_Ph_model,T_R, T) # J/mol
+    H_H2O: float = -241830 + 1000*(33.46*10**(-3)*(T-T_R)+0.6880*10**(-5)*1/2*(T-T_R)**2+0.7604*10**(-8)*1/3*(T-T_R)**3-3.593*10**(-12)*1/4*(T-T_R)**4) # J/mol
+    H_H2 : float = 0 + 1000*(28.84*10**(-3)*(T-T_R)+0.00765*10**(-5)*1/2*(T-T_R)**2+0.3288*10**(-8)*1/3*(T-T_R)**3-0.8698*10**(-12)*1/4*(T-T_R)**4) # J/mol
+    H_CO : float = -110520 + 1000*(28.95*10**(-3)*(T-T_R)+0.4110*10**(-5)*1/2*(T-T_R)**2+0.3548*10**(-8)*1/3*(T-T_R)**3-2.220*10**(-12)*1/4*(T-T_R)**4) # J/mol
+    H_CO2: float = -393500 + 1000*(36.11*10**(-3)*(T-T_R)+4.233*10**(-5)*1/2*(T-T_R)**2-2.887*10**(-8)*1/3*(T-T_R)**3+7.464*10**(-12)*1/4*(T-T_R)**4) # J/mol
 
-        dTadW : float = U*a*(T-Ta)/(m*Cp_calo)
+    deltaH_1 : float = 6/1*H_CO + 8/1*H_H2 - 5/1*H_H2O - H_Ph
+    deltaH_2 : float = 1/1*H_CO2 + 1/1*H_H2 - 1/1*H_H2O - H_CO
+    
+    # Attention, certaines formules ont des unités de K et d'autres de deg C
+    Cp_Ph : Polynomial = Cp_Ph_model.evaluate(T) # https://webbook.nist.gov/cgi/cbook.cgi?ID=C108952&Mask=1E9F#Thermo-Gas
+    Cp_H2O: float = 1000*(33.46*10**(-3)+0.6880*10**(-5)*(T+K)+0.7604*10**(-8)*(T+K)**2-3.593*10**(-12)*(T+K)**3) #J/(mol*deg C)
+    Cp_H2 : float = 1000*(28.84*10**(-3)+0.00765*10**(-5)*(T+K)+0.3288*10**(-8)*(T+K)**2-0.8698*10**(-12)*(T+K)**3) #J/(mol*deg C)
+    Cp_CO : float = 1000*(28.95*10**(-3)+0.4110*10**(-5)*(T+K)+0.3548*10**(-8)*(T+K)**2-2.220*10**(-12)*(T+K)**3) #J/(mol*deg C)
+    Cp_CO2: float = 1000*(36.11*10**(-3)+4.233*10**(-5)*(T+K)-2.887*10**(-8)*(T+K)**2+7.464*10**(-12)*(T+K)**3) #J/(mol*deg C)
+    Cp_N2 : float = 1000*(29.00*10**(-3)+0.2199*10**(-5)*(T+K)+0.5723*10**(-8)*(T+K)**2-2.871*10**(-12)*(T+K)**3) #J/(mol*deg C)
 
-        return dTadW
+    somme_rxn : float = ReactorEquations.r_srp(T,C_P,C_H2O)*deltaH_1 + ReactorEquations.r_wgs(T,C_P,C_CO,C_H2O,C_CO2,C_H2)*deltaH_2
+    somme_debit : float = F_Ph*Cp_Ph + F_H2O*Cp_H2O + F_H2*Cp_H2 + F_CO*Cp_CO + F_CO2*Cp_CO2 + F_N2*Cp_N2
 
-    @staticmethod
-    def a(Ac:float):
-        """
-        Surface d'échange de chaleur par kg de catalyseur
-        """
+    dTdW : float = (somme_rxn-U*a*(T-Ta))/somme_debit
 
-        D : float = Ac*4/pi
-        rho_bulk : float = rho_c*(1-phi)
-        a : float = 4/(D*rho_bulk)
+    return dTdW
 
-        return a
+@staticmethod
+def échange_chal(T:float,Ta:float,a:float,m:float):
+    """
+    Équation différentielle pour le fluide caloporteur
+    Le "a" est la surface d'échange de chaleur par kg de catalyseur
+    Le "m" est le débit massique de fluide caloporteur
+    """
+
+    dTadW : float = U*a*(T-Ta)/(m*Cp_calo)
+
+    return dTadW
+
+@staticmethod
+def a(Ac:float):
+    """
+    Surface d'échange de chaleur par kg de catalyseur
+    """
+
+    D : float = Ac*4/pi
+    rho_bulk : float = rho_c*(1-phi)
+    a : float = 4/(D*rho_bulk)
+
+    return a
 
 
 
@@ -211,44 +197,44 @@ def r_CO2(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
 
 
 
-    @staticmethod
-    def concentration(P_0:float, P:float, T_0:float, T:float, F_i:float, F_T:float):
-        """
-        Calcule la concentration d'une espèce pour une itération
-        """
-        return (P_0/(8.314*T_0))*(F_i/F_T)*(P/P_0)*(T_0/T)
+@staticmethod
+def concentration(P_0:float, P:float, T_0:float, T:float, F_i:float, F_T:float):
+    """
+    Calcule la concentration d'une espèce pour une itération
+    """
+    return (P_0/(8.314*T_0))*(F_i/F_T)*(P/P_0)*(T_0/T)
 
-    @staticmethod
-    def F_T(F_Ph:float,F_H2O:float,F_H_2:float,F_CO:float,F_CO2:float):
-        """
-        Débit total
-        """
-        F_T : float = F_Ph + F_H2O + F_H_2 + F_CO + F_CO2 
+@staticmethod
+def F_T(F_Ph:float,F_H2O:float,F_H_2:float,F_CO:float,F_CO2:float):
+    """
+    Débit total
+    """
+    F_T : float = F_Ph + F_H2O + F_H_2 + F_CO + F_CO2 
 
-        return F_T
+    return F_T
 
-    @staticmethod
-    def conversion(F_Ph0:float, F_Ph:float):
-        """
-        Calcule la conversion du PhOH
-        """
-        return (F_Ph0 - F_Ph)/F_Ph0
+@staticmethod
+def conversion(F_Ph0:float, F_Ph:float):
+    """
+    Calcule la conversion du PhOH
+    """
+    return (F_Ph0 - F_Ph)/F_Ph0
 
-    @staticmethod
-    def select_inst(r_H2:float,r_CO:float):
-        """
-        Calcule la sélectivité instantée du H2 par rapport au CO
-        On ne peut le faire par rapport au CO2, car il est produit par la même rxn que l'H2
-        """
-        return r_H2/r_CO
+@staticmethod
+def select_inst(r_H2:float,r_CO:float):
+    """
+    Calcule la sélectivité instantée du H2 par rapport au CO
+    On ne peut le faire par rapport au CO2, car il est produit par la même rxn que l'H2
+    """
+    return r_H2/r_CO
 
-    @staticmethod
-    def select_glo(F_H2:float,F_CO:float):
-        """
-        Calcule la sélectivité globale du H2 par rapport au CO
-        On ne peut le faire par rapport au CO2, car il est produit par la même rxn que l'H2
-        """
-        return F_H2/F_CO
+@staticmethod
+def select_glo(F_H2:float,F_CO:float):
+    """
+    Calcule la sélectivité globale du H2 par rapport au CO
+    On ne peut le faire par rapport au CO2, car il est produit par la même rxn que l'H2
+    """
+    return F_H2/F_CO
     
 
 
