@@ -237,7 +237,7 @@ class ReactorEquations:
         
         while(F_H2 < 25.0 and catalystWeigth < 1000):
 
-            r_srp : float = ReactorEquations.r_srp(temperature,C_Ph, C_H2O)
+            r_srp : float = ReactorEquations.r_srp(temperature, C_Ph, C_H2O)
             r_wgs : float = ReactorEquations.r_wgs(temperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
 
             r_Ph = ReactorEquations.r_Ph(r_srp)
