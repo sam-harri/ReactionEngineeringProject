@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Helper.Polynomial import Polynomial
 from ReactorConstants import ReactorConstants
+from NumericalMethods import NumericalMethods
 from typing import List
 from math import sqrt,exp,pi
 
@@ -247,19 +248,19 @@ class ReactorEquations:
             dF_H2_dW = r_H2 
             dF_CO2_dW = r_CO2 
             
+            dp_dW = NumericalMethods.rk4_dpdW(alpha, p, temperature, inletTemperature, F_T, feedRate)
+            dT_dW = NumericalMethods.rk4_dTdW(temperature, Ta, a, F_Ph, F_H2O, F_H2, F_CO, F_CO2, F_N2, C_Ph, C_H2O, C_CO, C_CO2, C_H2)
+            dTa_dW = NumericalMethods.rk4_dTadW(temperature, Ta, a, m_calo)
+            
+            p += dp_dW
+            temperature += dT_dW
+            Ta += dTa_dW
             F_Ph += dF_Ph_dW
             F_H20 += dF_H20_dW
             F_CO += dF_CO_dW
             F_H2 += dF_H2_dW
             F_CO2 += dF_CO2_dW
-            
-            dp_dW = ReactorEquations.ergun(alpha, p, temperature, inletTemperature, F_T, feedRate)
-            dT_dW = ReactorEquations.bilan_E(temperature, Ta, a, F_Ph, F_H2O, F_H2, F_CO, F_CO2, F_N2, C_Ph, C_H2O, C_CO, C_CO2, C_H2)
-            dTa_dW = ReactorEquations.echange_chal(temperature, Ta, a, m_calo)
-            
-            p += dp_dW
-            temperature += dT_dW
-            Ta += dTa_dW
+            F_T = ReactorEquations.F_T(F_Ph, F_H20, F_CO, F_H2, F_CO2)
             
             C_Ph = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_Ph, F_T)
             C_H2O = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_H20, F_T)
@@ -267,6 +268,7 @@ class ReactorEquations:
             C_H2 = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_H2, F_T)
             C_CO2 = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_CO2, F_T)
             
+            alpha = ReactorEquations.alpha(p * inletPressure, inletTemperature, temperature, phenolFraction, Ac, inletPressure, F_T)
             gloSelect: float = ReactorEquations.select_glo(F_H2, F_CO)
             conversion: float = ReactorEquations.conversion(feedRate*phenolFraction, F_Ph)
             
