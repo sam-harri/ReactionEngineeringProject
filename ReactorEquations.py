@@ -273,3 +273,7 @@ class ReactorEquations:
             conversion: float = ReactorEquations.conversion(feedRate*phenolFraction, F_Ph)
             
             catalystWeigth += ReactorConstants.StepSize
+            
+        if(F_H2 < 25.0):
+            return catalystWeigth, conversion, gloSelect
+        return 0,0,0
