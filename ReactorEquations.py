@@ -216,7 +216,6 @@ class ReactorEquations:
     @staticmethod
     def dimentionlizeReactor(inletTemperature: float, inletPressure: float, feedRate: float, phenolFraction: float, Ac: float):
         
-        pressure: float = inletPressure
         temperature: float = inletTemperature
         Ta: float =  Ta0
         
@@ -235,7 +234,7 @@ class ReactorEquations:
         F_CO, F_H2, F_CO2 = 0,0,0
         F_T = feedRate
         
-        while(F_H2 < 25.0 and catalystWeigth < 100):
+        while(F_H2 < 25.0 and catalystWeigth < 1000):
             r_Ph = ReactorEquations.r_Ph(inletTemperature,C_Ph, C_H2O)
             r_H2O = ReactorEquations.r_H2O(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
             r_CO = ReactorEquations.r_CO(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
@@ -262,18 +261,17 @@ class ReactorEquations:
             temperature += dT_dW
             Ta += dTa_dW
             
-            C_Ph = ReactorEquations.concentration(inletPressure, pressure, inletTemperature, temperature, F_Ph, F_T)
-            C_H2O = ReactorEquations.concentration(inletPressure, pressure, inletTemperature, temperature, F_H20, F_T)
-            C_CO = ReactorEquations.concentration(inletPressure, pressure, inletTemperature, temperature, F_CO, F_T)
-            C_H2 = ReactorEquations.concentration(inletPressure, pressure, inletTemperature, temperature, F_H2, F_T)
-            C_CO2 = ReactorEquations.concentration(inletPressure, pressure, inletTemperature, temperature, F_CO2, F_T)
+            C_Ph = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_Ph, F_T)
+            C_H2O = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_H20, F_T)
+            C_CO = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_CO, F_T)
+            C_H2 = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_H2, F_T)
+            C_CO2 = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_CO2, F_T)
             
-            intSelect: float = ReactorEquations.select_inst(r_H2, r_CO)
             gloSelect: float = ReactorEquations.select_glo(F_H2, F_CO)
             conversion: float = ReactorEquations.conversion(feedRate*phenolFraction, F_Ph)
             
             catalystWeigth += ReactorConstants.StepSize
             
-        if(F_H2 < 25.0):
+        if(F_H2 > 25.0):
             return catalystWeigth, conversion, gloSelect
         return 0,0,0
