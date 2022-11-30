@@ -15,6 +15,9 @@ U : float = ReactorConstants.U
 mu: float = ReactorConstants.mu
 Cp_Ph_model : Polynomial = ReactorConstants.Cp_Ph_model
 Cp_calo : float = ReactorConstants.Cp_calo
+YI0: float = ReactorConstants.YI0
+Ta0: float = ReactorConstants.T_calo_in
+m_calo: float = ReactorConstants.m_calo
 
 class ReactorEquations:
 
@@ -73,11 +76,7 @@ class ReactorEquations:
     @staticmethod
     def r_CO2(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
         return ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
-
-
-
-
-
+    
     @staticmethod
     def alpha(P:float,T0:float, temp:float, x_Ph:float, A_c:float,P0:float,FT:float):
         """
@@ -104,16 +103,9 @@ class ReactorEquations:
         """
         Loi de vitesse : water-gas shift (réversible)
         Température en K, concentrations dm^3/L
+        dP/dW
         """       
         return -alpha*temp*F_T/(2*p*T_0*F_T0)
-
-
-
-
-
-
-
-
     
     @staticmethod
     def conception(r_i:float):
@@ -121,14 +113,7 @@ class ReactorEquations:
         Équation de conception pour un PBR
         """
         return r_i
-
-
-
-
-
-
-
-
+    
     @staticmethod
     def bilan_E(T:float,Ta:float,a:float,F_Ph:float,F_H2O:float,F_H2:float,F_CO:float,F_CO2:float,F_N2:float,C_P:float,C_H2O:float,C_CO:float,C_CO2:float,C_H2:float):
         """
@@ -166,7 +151,7 @@ class ReactorEquations:
         return dTdW
 
     @staticmethod
-    def échange_chal(T:float,Ta:float,a:float,m:float):
+    def echange_chal(T:float,Ta:float,a:float,m:float):
         """
         Équation différentielle pour le fluide caloporteur
         Le "a" est la surface d'échange de chaleur par kg de catalyseur
@@ -188,15 +173,7 @@ class ReactorEquations:
         a : float = 4/(D*rho_bulk)
 
         return a
-
-
-
-
-
-
-
-
-
+    
     @staticmethod
     def concentration(P_0:float, P:float, T_0:float, T:float, F_i:float, F_T:float):
         """
@@ -235,18 +212,64 @@ class ReactorEquations:
         On ne peut le faire par rapport au CO2, car il est produit par la même rxn que l'H2
         """
         return F_H2/F_CO
-        
-
-
-
-
-
-
-
 
     @staticmethod
-    def dimentionlizeReactor(temperature: float, inletPressure: float, feedRate: float, phenolFraction: float):
-        """
-        returns volume, selectivity, and conversion
-        """
-        pass
+    def dimentionlizeReactor(inletTemperature: float, inletPressure: float, feedRate: float, phenolFraction: float, Ac: float):
+        
+        pressure: float = inletPressure
+        temperature: float = inletTemperature
+        Ta: float =  Ta0
+        
+        catalystWeigth: float = 0
+        p: float = 1
+        F_N2: float = YI0 * feedRate
+        a: float = ReactorEquations.a(Ac)
+        alpha: float = ReactorEquations.alpha(inletPressure, inletTemperature, inletTemperature, phenolFraction, Ac, inletPressure, feedRate)
+        
+        C_Ph = phenolFraction * (inletPressure)/(inletTemperature * 0.00008205737)
+        C_H2O = (1-phenolFraction-YI0) * (inletPressure)/(inletTemperature * 0.00008205737)
+        C_CO, C_H2, C_CO2 = 0,0,0
+    
+        F_Ph = feedRate*phenolFraction
+        F_H2O = feedRate * (1-phenolFraction-YI0)
+        F_CO, F_H2, F_CO2 = 0,0,0
+        F_T = feedRate
+        
+        while(F_H2 < 25.0 and catalystWeigth < 100):
+            r_Ph = ReactorEquations.r_Ph(inletTemperature,C_Ph, C_H2O)
+            r_H2O = ReactorEquations.r_H2O(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
+            r_CO = ReactorEquations.r_CO(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
+            r_H2 = ReactorEquations.r_H2(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
+            r_CO2 = ReactorEquations.r_CO2(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
+            
+            dF_Ph_dW = r_Ph 
+            dF_H20_dW = r_H2O 
+            dF_CO_dW = r_CO 
+            dF_H2_dW = r_H2 
+            dF_CO2_dW = r_CO2 
+            
+            F_Ph += dF_Ph_dW
+            F_H20 += dF_H20_dW
+            F_CO += dF_CO_dW
+            F_H2 += dF_H2_dW
+            F_CO2 += dF_CO2_dW
+            
+            dp_dW = ReactorEquations.ergun(alpha, p, temperature, inletTemperature, F_T, feedRate)
+            dT_dW = ReactorEquations.bilan_E(temperature, Ta, a, F_Ph, F_H2O, F_H2, F_CO, F_CO2, F_N2, C_Ph, C_H2O, C_CO, C_CO2, C_H2)
+            dTa_dW = ReactorEquations.echange_chal(temperature, Ta, a, m_calo)
+            
+            p += dp_dW
+            temperature += dT_dW
+            Ta += dTa_dW
+            
+            C_Ph = ReactorEquations.concentration(inletPressure, pressure, inletTemperature, temperature, F_Ph, F_T)
+            C_H2O = ReactorEquations.concentration(inletPressure, pressure, inletTemperature, temperature, F_H20, F_T)
+            C_CO = ReactorEquations.concentration(inletPressure, pressure, inletTemperature, temperature, F_CO, F_T)
+            C_H2 = ReactorEquations.concentration(inletPressure, pressure, inletTemperature, temperature, F_H2, F_T)
+            C_CO2 = ReactorEquations.concentration(inletPressure, pressure, inletTemperature, temperature, F_CO2, F_T)
+            
+            intSelect: float = ReactorEquations.select_inst(r_H2, r_CO)
+            gloSelect: float = ReactorEquations.select_glo(F_H2, F_CO)
+            conversion: float = ReactorEquations.conversion(feedRate*phenolFraction, F_Ph)
+            
+            catalystWeigth += ReactorConstants.StepSize
