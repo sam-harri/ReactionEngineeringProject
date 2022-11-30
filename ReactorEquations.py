@@ -236,11 +236,11 @@ class ReactorEquations:
         F_T = feedRate
         
         while(F_H2 < 25.0 and catalystWeigth < 1000):
-            r_Ph = ReactorEquations.r_Ph(inletTemperature,C_Ph, C_H2O)
-            r_H2O = ReactorEquations.r_H2O(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
-            r_CO = ReactorEquations.r_CO(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
-            r_H2 = ReactorEquations.r_H2(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
-            r_CO2 = ReactorEquations.r_CO2(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
+            r_Ph = ReactorEquations.r_Ph(temperature,C_Ph, C_H2O)
+            r_H2O = ReactorEquations.r_H2O(temperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
+            r_CO = ReactorEquations.r_CO(temperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
+            r_H2 = ReactorEquations.r_H2(temperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
+            r_CO2 = ReactorEquations.r_CO2(temperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
             
             dF_Ph_dW = r_Ph 
             dF_H20_dW = r_H2O 
