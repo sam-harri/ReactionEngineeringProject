@@ -59,24 +59,24 @@ class ReactorEquations:
 
     # Lois de vitesses globales
     @staticmethod
-    def r_Ph(temp:float,C_P:float,C_H2O:float):
-        return -ReactorEquations.r_srp(temp,C_P,C_H2O)
+    def r_Ph(r_srp:float):
+        return -r_srp
 
     @staticmethod
-    def r_H2O(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
-        return -5*ReactorEquations.r_srp(temp,C_P,C_H2O)-ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
+    def r_H2O(r_srp:float,r_wgs:float):
+        return -5*r_srp - r_wgs
 
     @staticmethod
-    def r_H2(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
-        return 8*ReactorEquations.r_srp(temp,C_P,C_H2O)+ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
+    def r_H2(r_srp:float,r_wgs:float):
+        return 8*r_srp + r_wgs
 
     @staticmethod
-    def r_CO(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
-        return 6*ReactorEquations.r_srp(temp,C_P,C_H2O)-ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
+    def r_CO(r_srp:float,r_wgs:float):
+        return 6*r_srp - r_wgs
 
     @staticmethod
-    def r_CO2(temp:float,C_P:float,C_CO:float,C_H2O:float,C_CO2:float,C_H2:float):
-        return ReactorEquations.r_wgs(temp,C_P,C_CO,C_H2O,C_CO2,C_H2)
+    def r_CO2(r_wgs:float):
+        return r_wgs
     
     @staticmethod
     def alpha(P:float,T0:float, temp:float, x_Ph:float, A_c:float,P0:float,FT:float):
@@ -236,11 +236,15 @@ class ReactorEquations:
         F_T = feedRate
         
         while(F_H2 < 25.0 and catalystWeigth < 1000):
-            r_Ph = ReactorEquations.r_Ph(inletTemperature,C_Ph, C_H2O)
-            r_H2O = ReactorEquations.r_H2O(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
-            r_CO = ReactorEquations.r_CO(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
-            r_H2 = ReactorEquations.r_H2(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
-            r_CO2 = ReactorEquations.r_CO2(inletTemperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
+
+            r_srp : float = ReactorEquations.r_srp(temperature, C_Ph, C_H2O)
+            r_wgs : float = ReactorEquations.r_wgs(temperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
+
+            r_Ph = ReactorEquations.r_Ph(r_srp)
+            r_H2O = ReactorEquations.r_H2O(r_srp,r_wgs)
+            r_CO = ReactorEquations.r_CO(r_srp,r_wgs)
+            r_H2 = ReactorEquations.r_H2(r_srp,r_wgs)
+            r_CO2 = ReactorEquations.r_CO2(r_wgs)
             
             dF_Ph_dW = r_Ph 
             dF_H20_dW = r_H2O 
