@@ -269,7 +269,8 @@ class ReactorEquations:
             C_CO2 = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_CO2, F_T)
             
             alpha = ReactorEquations.alpha(p * inletPressure, inletTemperature, temperature, phenolFraction, Ac, inletPressure, F_T)
-            gloSelect: float = ReactorEquations.select_glo(F_H2, F_CO)
+            if(F_CO!=0):
+                gloSelect: float = ReactorEquations.select_glo(F_H2, F_CO)
             conversion: float = ReactorEquations.conversion(feedRate*phenolFraction, F_Ph)
             
             catalystWeigth += ReactorConstants.StepSize
