@@ -135,3 +135,4 @@ if(__name__ == "__main__"):
     # predictedReactorData = reactorModel.fit(surfaceReactor)
     
     #https://stackoverflow.com/questions/54859865/scikit-learn-order-of-coefficients-for-multiple-linear-regression-and-polynomia
+    #https://towardsdatascience.com/polynomial-regression-gradient-descent-from-scratch-279db2936fe9

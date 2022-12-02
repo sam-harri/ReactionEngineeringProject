@@ -37,7 +37,7 @@ class NumericalMethods:
         k1_F_CO = F_CO
         k1_F_H2 = F_H2
         k1_F_CO2 = F_CO2
-        k1_F_T = ReactorEquations.F_T(k1_F_Ph, k1_F_H2O, k1_F_CO, k1_F_H2, k1_F_CO2)
+        k1_F_T = ReactorEquations.F_T(k1_F_Ph, k1_F_H2O, k1_F_CO, k1_F_H2, k1_F_CO2, F_N2)
         
         k1_C_Ph = ReactorEquations.concentration(inletPressure, k1_p*inletPressure, inletTemperature, k1_temperature, k1_F_Ph, k1_F_T)
         k1_C_H2O = ReactorEquations.concentration(inletPressure, k1_p*inletPressure, inletTemperature, k1_temperature, k1_F_H2O, k1_F_T)
@@ -66,7 +66,7 @@ class NumericalMethods:
         k2_F_CO = F_CO + (h * 0.5 *k1_dF_CO_dW)
         k2_F_H2 = F_H2 + (h * 0.5 *k1_dF_H2_dW)
         k2_F_CO2 = F_CO2 + (h * 0.5 *k1_dF_CO2_dW)
-        k2_F_T = ReactorEquations.F_T(k2_F_Ph, k2_F_H2O, k2_F_CO, k2_F_H2, k2_F_CO2)
+        k2_F_T = ReactorEquations.F_T(k2_F_Ph, k2_F_H2O, k2_F_CO, k2_F_H2, k2_F_CO2, F_N2)
         
         k2_C_Ph = ReactorEquations.concentration(inletPressure, k2_p*inletPressure, inletTemperature, k2_temperature, k2_F_Ph, k2_F_T)
         k2_C_H2O = ReactorEquations.concentration(inletPressure, k2_p*inletPressure, inletTemperature, k2_temperature, k2_F_H2O, k2_F_T)
@@ -95,7 +95,7 @@ class NumericalMethods:
         k3_F_CO = F_CO + (0.5 * h * k2_dF_CO_dW)
         k3_F_H2 = F_H2 + (0.5 * h * k2_dF_H2_dW)
         k3_F_CO2 = F_CO2 + (0.5 * h * k2_dF_CO2_dW)
-        k3_F_T = ReactorEquations.F_T(k3_F_Ph, k3_F_H2O, k3_F_CO, k3_F_H2, k3_F_CO2)
+        k3_F_T = ReactorEquations.F_T(k3_F_Ph, k3_F_H2O, k3_F_CO, k3_F_H2, k3_F_CO2, F_N2)
         
         k3_C_Ph = ReactorEquations.concentration(inletPressure, k3_p*inletPressure, inletTemperature, k3_temperature, k3_F_Ph, k3_F_T)
         k3_C_H2O = ReactorEquations.concentration(inletPressure, k3_p*inletPressure, inletTemperature, k3_temperature, k3_F_H2O, k3_F_T)
@@ -124,7 +124,7 @@ class NumericalMethods:
         k4_F_CO = F_CO + (h * 0.5 * k3_F_CO)
         k4_F_H2 = F_H2 + (h * 0.5 * k3_F_H2)
         k4_F_CO2 = F_CO2 + (h * 0.5 * k3_F_CO2)
-        k4_F_T = ReactorEquations.F_T(k4_F_Ph, k4_F_H2O, k4_F_CO, k4_F_H2, k4_F_CO2)
+        k4_F_T = ReactorEquations.F_T(k4_F_Ph, k4_F_H2O, k4_F_CO, k4_F_H2, k4_F_CO2, F_N2)
         
         k4_C_Ph = ReactorEquations.concentration(inletPressure, k4_p*inletPressure, inletTemperature, k4_temperature, k4_F_Ph, k4_F_T)
         k4_C_H2O = ReactorEquations.concentration(inletPressure, k4_p*inletPressure, inletTemperature, k4_temperature, k4_F_H2O, k4_F_T)
@@ -154,4 +154,4 @@ class NumericalMethods:
         dF_H2_dW = (1.0/6.0)*(k1_dF_H2_dW + 2*k2_dF_H2_dW + 2*k3_dF_H2_dW + k4_dF_H2_dW)
         dF_CO2_dW = (1.0/6.0)*(k1_dF_CO2_dW + 2*k2_dF_CO2_dW + 2*k3_dF_CO2_dW + k4_dF_CO2_dW)
         
-        return dpdW, dTdW, dTadW, dF_Ph_dW, dF_H2O_dW, dF_CO_dW, dF_H2_dW, dF_CO2_dW
+        return dTdW, dpdW, dTadW, dF_Ph_dW, dF_H2O_dW, dF_CO_dW, dF_H2_dW, dF_CO2_dW
