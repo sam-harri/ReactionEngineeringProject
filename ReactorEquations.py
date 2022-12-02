@@ -1,9 +1,5 @@
-import matplotlib.pyplot as plt
-import numpy as np
 from Helper.Polynomial import Polynomial
 from ReactorConstants import ReactorConstants
-from NumericalMethods import NumericalMethods
-from typing import List
 from math import sqrt,exp,pi
 
 F_H2 : float = ReactorConstants.F_H2
@@ -30,13 +26,13 @@ class ReactorEquations:
         Température en K, concentrations dm^3/L
         """
         k_srp: float = exp(7.63-39960/(8.314*temp))
-        K_P: float = K_P.evaluate(temp)
-        K_H2O: float = K_H2O.evaluate(temp)
+        K_P_eval: float = K_P.evaluate(temp)
+        K_H2O_eval: float = K_H2O.evaluate(temp)
 
         P_P: float = C_Ph*8.2057*10**(-5)*temp
         P_H2O: float = C_H2O*8.2057*10**(-5)*temp
 
-        return k_srp*K_P*K_H2O*(P_P*P_H2O**5)/(K_P*P_P+K_H2O*P_H2O+1)**2
+        return k_srp*K_P_eval*K_H2O_eval*(P_P*P_H2O**5)/(K_P_eval*P_P+K_H2O_eval*P_H2O+1)**2
 
     @staticmethod
     def r_wgs(temp: float, C_Ph: float, C_CO: float, C_H2O: float, C_CO2: float, C_H2: float):
@@ -47,8 +43,8 @@ class ReactorEquations:
         k_wgs: float = exp(7.45-40100/(8.314*temp))
         k_rwgs: float = exp(7.03-38840/(8.314*temp))
         K_wgs: float = k_wgs/k_rwgs
-        K_P: float = K_P.evaluate(temp)
-        K_H2O: float = K_H2O.evaluate(temp)
+        K_P_eval: float = K_P.evaluate(temp)
+        K_H2O_eval: float = K_H2O.evaluate(temp)
         
         P_P: float = C_Ph*8.2057*10**(-5)*temp
         P_CO: float = C_CO*8.2057*10**(-5)*temp
@@ -56,7 +52,7 @@ class ReactorEquations:
         P_CO2: float = C_CO2*8.2057*10**(-5)*temp
         P_H2: float = C_H2*8.2057*10**(-5)*temp
 
-        return k_wgs*(P_CO*P_H2O-P_CO2*P_H2/K_wgs)/(K_P*P_P+K_H2O*P_H2O+1)**2
+        return k_wgs*(P_CO*P_H2O-P_CO2*P_H2/K_wgs)/(K_P_eval*P_P+K_H2O_eval*P_H2O+1)**2
 
     # Lois de vitesses globales
     @staticmethod
@@ -221,41 +217,3 @@ class ReactorEquations:
         Calcule le rendement globale du H2 par rapport au Ph ayant réagit
         """
         return (F_H2/(F_Ph0-F_Ph))
-
-
-    @staticmethod
-    def dimentionlizeReactor(inletTemperature: float, inletPressure: float, feedRate: float, phenolFraction: float, Ac: float):
-        
-        a = ReactorEquations.a(Ac)
-        temperature = inletTemperature
-        p = 1
-        Ta = ReactorConstants.T_calo_in
-        F_Ph = feedRate * phenolFraction
-        F_H2O = feedRate * (1-phenolFraction-ReactorConstants.YI0)
-        F_CO = 0
-        F_H2 = 0
-        F_CO2 = 0
-        F_N2 = feedRate * ReactorConstants.YI0
-        
-        catalystWeigth = 0
-        while(F_H2 < 25.0 and catalystWeigth < 1000):
-            
-            TdW, dpdW, dTadW, dF_Ph_dW, dF_H2O_dW, dF_CO_dW, dF_H2_dW, dF_CO2_dW = \
-            NumericalMethods.rk4_1step(inletPressure, inletTemperature, p, temperature, feedRate, Ac, a, Ta, F_Ph, F_H2O, F_CO, F_H2, F_CO2, phenolFraction)
-            temperature += h * TdW
-            p += h * dpdW
-            Ta += h * dTadW
-            F_Ph += h * dF_Ph_dW
-            F_H2O += h * dF_H2O_dW
-            F_CO += h * dF_CO_dW
-            F_H2 += h * dF_H2_dW
-            F_CO2 += h * dF_CO2_dW
-            
-            catalystWeigth += h
-        
-        conversion = ReactorEquations.conversion(feedRate*phenolFraction, F_Ph)
-        gloSelect = ReactorEquations.select_glo(F_H2, F_CO)
-        
-        if(F_H2 > 25.0):
-            return catalystWeigth, conversion, gloSelect
-        return 0,0,0
