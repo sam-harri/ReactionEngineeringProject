@@ -32,7 +32,7 @@ if(__name__ == "__main__"):
         "Conversion" : []}
     )
     
-    temperatureRange = np.linspace(600,800, num=5)
+    temperatureRange = np.linspace(873.15,1073.15, num=5)
     inletPressureRange = np.linspace(1,5, num=5)
     feedRateRange = np.linspace(32,500,num=5)
     phenolFractionRange = np.linspace(0.01, 0.1, num=5)
@@ -71,7 +71,9 @@ if(__name__ == "__main__"):
                             volume,
                             selectivity,
                             conversion])
-                        np.savetxt('myfile.csv', tmp, delimiter=',')
+                        with open('CsvData/tempRawReactorData.csv','a', newline="") as f:
+                            writer = csv.writer(f)
+                            writer.writerow(tmp)
                         rawDF.loc[len(rawDF.index)] = tmp
                         run +=1
     

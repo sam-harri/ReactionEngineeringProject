@@ -1,29 +1,10 @@
-from typing import Callable
 from ReactorEquations import ReactorEquations
 from ReactorConstants import ReactorConstants
 
 class NumericalMethods:
     
     @staticmethod
-    def bisection(upper: float, lower: float, func: Callable):
-        """
-        Returns the root of func found between [Upper, Lower]
-        """
-        old: float = 1 #temp set variables, get overridden after first loop
-        new: float = 0
-        middle: float = (upper + lower)/2
-        while(abs(old-new)>0.00001):
-            if(func(middle)*func(upper)>0):
-                upper = middle
-            else:
-                lower = middle
-            old = func(middle)
-            middle = (upper + lower)/2
-            new = func(middle)
-        return middle
-    
-    @staticmethod
-    def rk4_1step(inletPressure, inletTemperature, p, temperature, feedRate, Ac, a, Ta, F_Ph, F_H20, F_CO, F_H2, F_CO2, phenolFraction):
+    def rk4_1step(inletPressure, inletTemperature, p, temperature, feedRate, Ac, a, Ta, F_Ph, F_H2O, F_CO, F_H2, F_CO2, phenolFraction):
         h = ReactorConstants.StepSize
         F_N2 = ReactorConstants.YI0 * feedRate
         m_calo = ReactorConstants.m_calo
@@ -33,7 +14,7 @@ class NumericalMethods:
         k1_p = p
         k1_Ta = Ta
         k1_F_Ph = F_Ph
-        k1_F_H2O = F_H20
+        k1_F_H2O = F_H2O
         k1_F_CO = F_CO
         k1_F_H2 = F_H2
         k1_F_CO2 = F_CO2
@@ -62,7 +43,7 @@ class NumericalMethods:
         k2_p = p + (0.5 * h * k1_dpdW)
         k2_Ta = Ta + (0.5 * h * k1_dTadW)
         k2_F_Ph = F_Ph + (h * 0.5 *k1_dF_Ph_dW)
-        k2_F_H2O = F_H20 + (h * 0.5 *k1_dF_H20_dW)
+        k2_F_H2O = F_H2O + (h * 0.5 *k1_dF_H20_dW)
         k2_F_CO = F_CO + (h * 0.5 *k1_dF_CO_dW)
         k2_F_H2 = F_H2 + (h * 0.5 *k1_dF_H2_dW)
         k2_F_CO2 = F_CO2 + (h * 0.5 *k1_dF_CO2_dW)
@@ -91,7 +72,7 @@ class NumericalMethods:
         k3_p = p + (0.5 * h * k2_dpdW)
         k3_Ta = Ta + (0.5 * h * k2_dTadW)
         k3_F_Ph = F_Ph + (0.5 * h * k2_dF_Ph_dW)
-        k3_F_H2O = F_H20 + (0.5 * h * k2_dF_H2O_dW)
+        k3_F_H2O = F_H2O + (0.5 * h * k2_dF_H2O_dW)
         k3_F_CO = F_CO + (0.5 * h * k2_dF_CO_dW)
         k3_F_H2 = F_H2 + (0.5 * h * k2_dF_H2_dW)
         k3_F_CO2 = F_CO2 + (0.5 * h * k2_dF_CO2_dW)
@@ -120,7 +101,7 @@ class NumericalMethods:
         k4_p = p + (h * 0.5 * k3_p)
         k4_Ta = Ta + (h * 0.5 * k3_Ta)
         k4_F_Ph = F_Ph + (h * 0.5 * k3_F_Ph)
-        k4_F_H2O = F_H20 + (h * 0.5 * k3_F_H2O)
+        k4_F_H2O = F_H2O + (h * 0.5 * k3_F_H2O)
         k4_F_CO = F_CO + (h * 0.5 * k3_F_CO)
         k4_F_H2 = F_H2 + (h * 0.5 * k3_F_H2)
         k4_F_CO2 = F_CO2 + (h * 0.5 * k3_F_CO2)
