@@ -23,7 +23,7 @@ m_calo: float = ReactorConstants.m_calo
 class ReactorEquations:
 
     @staticmethod
-    def r_srp(temp: float, C_P: float, C_H2O: float):
+    def r_srp(temp: float, C_Ph: float, C_H2O: float):
         """
         Loi de vitesse : reformage du phénol
         Température en K, concentrations dm^3/L
@@ -32,13 +32,13 @@ class ReactorEquations:
         K_P: float = K_P.evaluate(temp)
         K_H2O: float = K_H2O.evaluate(temp)
 
-        P_P: float = C_P*8.314*temp
+        P_P: float = C_Ph*8.314*temp
         P_H2O: float = C_H2O*8.314*temp
 
         return k_srp*K_P*K_H2O*(P_P*P_H2O**5)/(K_P*P_P+K_H2O*P_H2O+1)**2
 
     @staticmethod
-    def r_wgs(temp: float, C_P: float, C_CO: float, C_H2O: float, C_CO2: float, C_H2: float):
+    def r_wgs(temp: float, C_Ph: float, C_CO: float, C_H2O: float, C_CO2: float, C_H2: float):
         """
         Loi de vitesse : water-gas shift (réversible)
         Température en K, concentrations dm^3/L
@@ -49,7 +49,7 @@ class ReactorEquations:
         K_P: float = K_P.evaluate(temp)
         K_H2O: float = K_H2O.evaluate(temp)
         
-        P_P: float = C_P*8.314*temp
+        P_P: float = C_Ph*8.314*temp
         P_CO: float = C_CO*8.314*temp
         P_H2O: float = C_H2O*8.314*temp
         P_CO2: float = C_CO2*8.314*temp
@@ -217,67 +217,12 @@ class ReactorEquations:
     @staticmethod
     def dimentionlizeReactor(inletTemperature: float, inletPressure: float, feedRate: float, phenolFraction: float, Ac: float):
         
-        temperature: float = inletTemperature
-        Ta: float =  Ta0
-        
-        catalystWeigth: float = 0
-        p: float = 1
-        F_N2: float = YI0 * feedRate
-        a: float = ReactorEquations.a(Ac)
-        alpha: float = ReactorEquations.alpha(inletPressure, inletTemperature, inletTemperature, phenolFraction, Ac, inletPressure, feedRate)
-        
-        C_Ph = phenolFraction * (inletPressure)/(inletTemperature * 0.00008205737)
-        C_H2O = (1-phenolFraction-YI0) * (inletPressure)/(inletTemperature * 0.00008205737)
-        C_CO, C_H2, C_CO2 = 0,0,0
-    
-        F_Ph = feedRate*phenolFraction
-        F_H2O = feedRate * (1-phenolFraction-YI0)
-        F_CO, F_H2, F_CO2 = 0,0,0
-        F_T = feedRate
-        
+        catalystWeigth = 0
         while(F_H2 < 25.0 and catalystWeigth < 1000):
-
-            r_srp : float = ReactorEquations.r_srp(temperature, C_Ph, C_H2O)
-            r_wgs : float = ReactorEquations.r_wgs(temperature, C_Ph, C_CO, C_H2O, C_CO2, C_H2)
-
-            r_Ph = ReactorEquations.r_Ph(r_srp)
-            r_H2O = ReactorEquations.r_H2O(r_srp,r_wgs)
-            r_CO = ReactorEquations.r_CO(r_srp,r_wgs)
-            r_H2 = ReactorEquations.r_H2(r_srp,r_wgs)
-            r_CO2 = ReactorEquations.r_CO2(r_wgs)
             
-            dF_Ph_dW = r_Ph 
-            dF_H20_dW = r_H2O 
-            dF_CO_dW = r_CO 
-            dF_H2_dW = r_H2 
-            dF_CO2_dW = r_CO2 
             
-            dp_dW = NumericalMethods.rk4_dpdW(alpha, p, temperature, inletTemperature, F_T, feedRate)
-            dT_dW = NumericalMethods.rk4_dTdW(temperature, Ta, a, F_Ph, F_H2O, F_H2, F_CO, F_CO2, F_N2, C_Ph, C_H2O, C_CO, C_CO2, C_H2)
-            dTa_dW = NumericalMethods.rk4_dTadW(temperature, Ta, a, m_calo)
             
-            p += dp_dW
-            temperature += dT_dW
-            Ta += dTa_dW
-            F_Ph += dF_Ph_dW
-            F_H20 += dF_H20_dW
-            F_CO += dF_CO_dW
-            F_H2 += dF_H2_dW
-            F_CO2 += dF_CO2_dW
-            F_T = ReactorEquations.F_T(F_Ph, F_H20, F_CO, F_H2, F_CO2)
-            
-            C_Ph = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_Ph, F_T)
-            C_H2O = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_H20, F_T)
-            C_CO = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_CO, F_T)
-            C_H2 = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_H2, F_T)
-            C_CO2 = ReactorEquations.concentration(inletPressure, p * inletPressure, inletTemperature, temperature, F_CO2, F_T)
-            
-            alpha = ReactorEquations.alpha(p * inletPressure, inletTemperature, temperature, phenolFraction, Ac, inletPressure, F_T)
-            if(F_CO!=0):
-                gloSelect: float = ReactorEquations.select_glo(F_H2, F_CO)
-            conversion: float = ReactorEquations.conversion(feedRate*phenolFraction, F_Ph)
-            
-            catalystWeigth += ReactorConstants.StepSize
+            catalystWeigth += 1
             
         if(F_H2 > 25.0):
             return catalystWeigth, conversion, gloSelect

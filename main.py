@@ -57,7 +57,12 @@ if(__name__ == "__main__"):
                 for phenolFraction in phenolFractionRange:
                     for crossSectionalArea in crossSectionAreaRange:
                         volume, selectivity, conversion = ReactorEquations.dimentionlizeReactor(inletTemperature,inletPressure,feedRate,phenolFraction,crossSectionalArea)
-                        tmp = np.array([run,
+                        if(volume==0):
+                            print(f'Run {run} : Failure')
+                        else:
+                            print(f'Run {run} : Success - {volume}, {selectivity}, {conversion}')
+                        tmp = np.array([
+                            run,
                             inletTemperature,
                             inletPressure,
                             feedRate,
