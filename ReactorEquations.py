@@ -216,6 +216,14 @@ class ReactorEquations:
         return F_H2/F_CO
 
     @staticmethod
+    def rendement(F_Ph0:float,F_Ph:float,F_H2:float):
+        """
+        Calcule le rendement globale du H2 par rapport au Ph ayant réagit
+        """
+        return (F_H2/(F_Ph0-F_Ph))
+
+
+    @staticmethod
     def dimentionlizeReactor(inletTemperature: float, inletPressure: float, feedRate: float, phenolFraction: float, Ac: float):
         
         a = ReactorEquations.a(Ac)
