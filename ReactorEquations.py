@@ -125,7 +125,7 @@ class ReactorEquations:
         Le "a" est la surface d'échange de chaleur par kg de catalyseur
         """
         T_R = 298.15
-        K = 273.15
+        K = -273.15
         
         # Enthalpies de formation à 25 deg C et 1 atm en phase gazeuse (Source: Felder et Rousseau)
         H_Ph : float = -90800 + Polynomial.definiteIntegral(Cp_Ph_model,T_R, T) # J/mol
