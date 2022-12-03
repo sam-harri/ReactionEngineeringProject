@@ -11,6 +11,7 @@ rho_c : float = ReactorConstants.rho_c
 U : float = ReactorConstants.U
 mu: float = ReactorConstants.mu
 Cp_Ph_model : Polynomial = ReactorConstants.Cp_Ph_model
+Cp_Ph_model_integrated : Polynomial = ReactorConstants.CP_Ph_model_integrated
 Cp_calo : float = ReactorConstants.Cp_calo
 YI0: float = ReactorConstants.YI0
 Ta0: float = ReactorConstants.T_calo_in
@@ -122,7 +123,7 @@ class ReactorEquations:
         K = -273.15
         
         # Enthalpies de formation à 25 deg C et 1 atm en phase gazeuse (Source: Felder et Rousseau)
-        H_Ph : float = -90800 + Polynomial.definiteIntegral(Cp_Ph_model,T_R, T) # J/mol
+        H_Ph : float = -90800 + Cp_Ph_model_integrated.evaluate(T)-Cp_Ph_model_integrated.evaluate(T_R) # J/mol
         H_H2O: float = -241830 + 1000*(33.46*10**(-3)*(T-T_R)+0.6880*10**(-5)*1/2*(T-T_R)**2+0.7604*10**(-8)*1/3*(T-T_R)**3-3.593*10**(-12)*1/4*(T-T_R)**4) # J/mol
         H_H2 : float = 0 + 1000*(28.84*10**(-3)*(T-T_R)+0.00765*10**(-5)*1/2*(T-T_R)**2+0.3288*10**(-8)*1/3*(T-T_R)**3-0.8698*10**(-12)*1/4*(T-T_R)**4) # J/mol
         H_CO : float = -110520 + 1000*(28.95*10**(-3)*(T-T_R)+0.4110*10**(-5)*1/2*(T-T_R)**2+0.3548*10**(-8)*1/3*(T-T_R)**3-2.220*10**(-12)*1/4*(T-T_R)**4) # J/mol
@@ -142,7 +143,7 @@ class ReactorEquations:
         somme_rxn : float = ReactorEquations.r_srp(T,C_P,C_H2O)*deltaH_1 + ReactorEquations.r_wgs(T,C_P,C_CO,C_H2O,C_CO2,C_H2)*deltaH_2
         somme_debit : float = F_Ph*Cp_Ph + F_H2O*Cp_H2O + F_H2*Cp_H2 + F_CO*Cp_CO + F_CO2*Cp_CO2 + F_N2*Cp_N2
 
-        dTdW : float = (somme_rxn-U*a*(T-Ta))/somme_debit
+        dTdW : float = (-somme_rxn-U*a*(T-Ta))/somme_debit
 
         return dTdW
 

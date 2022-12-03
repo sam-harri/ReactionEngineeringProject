@@ -2,12 +2,15 @@ from ReactorConstants import ReactorConstants
 from ReactorEquations import ReactorEquations
 from NumericalMethods import NumericalMethods
 import csv
+import time
+
+start = time.time()
 
 inletTemperature = 973.15 #K
 inletPressure = 3 #atm
-feedRate = 200 #mol/s
-phenolFraction = 0.05 #molPh/mol
-Ac = 0.75 #m^2
+feedRate = 175 #mol/s
+phenolFraction = 0.02 #molPh/mol
+Ac = 0.4 #m^2
 
 h = ReactorConstants.StepSize
 a = ReactorEquations.a(Ac)
@@ -28,21 +31,12 @@ with open('testCsv.csv','w', newline="") as f:
     writer.writerow(["catalystWeigth", "temperature", "p", "Ta", "F_Ph", "F_H2O", "F_CO", "F_H2", "F_CO2"])
 
 catalystWeigth = 0
-while(F_H2 < 25.0 and catalystWeigth < 1000):
+while(F_H2 < 25.0 and catalystWeigth < 30 and p>0):
     
     TdW, dpdW, dTadW, dF_Ph_dW, dF_H2O_dW, dF_CO_dW, dF_H2_dW, dF_CO2_dW = \
     NumericalMethods.rk4_1step(inletPressure, inletTemperature, p, temperature, feedRate, Ac, a, Ta, F_Ph, F_H2O, F_CO, F_H2, F_CO2, phenolFraction, alpha)
     temperature += h * TdW
-    
-    print("TdW :" + str(TdW))
-    print("dpdW :" + str(dpdW))
-    print("dTadW :" + str(dTadW))
-    print("dF_Ph_dW :" + str(dF_Ph_dW))
-    print("dF_H2O_dW :" + str(dF_H2O_dW))
-    print("dF_CO_dW :" + str(dF_CO_dW))
-    print("dF_H2_dW :" + str(dF_H2_dW))
-    print("dF_CO2_dW :" + str(dF_CO2_dW))
-    
+
     p += h * dpdW
     Ta += h * dTadW
     F_Ph += h * dF_Ph_dW
@@ -52,9 +46,13 @@ while(F_H2 < 25.0 and catalystWeigth < 1000):
     F_CO2 += h * dF_CO2_dW
     
     csvArr = [catalystWeigth, temperature, p, Ta, F_Ph, F_H2O, F_CO, F_H2, F_CO2]
-    
     with open('testCsv.csv','a', newline="") as f:
         writer = csv.writer(f)
         writer.writerow(csvArr)
     
     catalystWeigth += h
+    
+end = time.time()
+
+print("The time of execution of above program is :",
+      (end-start) * 10**3, "ms")

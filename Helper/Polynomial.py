@@ -27,10 +27,12 @@ class Polynomial:
             term.coefficient *= term.power
             term.power -= 1
     
-    def integrate(self):
-        for term in self.termArr:
+    @staticmethod
+    def integrate(poly):
+        for term in poly.termArr:
             term.coefficient /= term.power+1
             term.power += 1
+        return poly
     
     @staticmethod
     def definiteIntegral(poly, lower, upper):

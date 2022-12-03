@@ -34,10 +34,9 @@ if(__name__ == "__main__"):
     
     temperatureRange = np.linspace(873.15,1073.15, num=5)
     inletPressureRange = np.linspace(1,5, num=5)
-    feedRateRange = np.linspace(32,500,num=5)
+    feedRateRange = np.linspace(50,300,num=5)
     phenolFractionRange = np.linspace(0.01, 0.1, num=5)
-    crossSectionAreaRange = np.linspace(0.1, 1, num=5)
-    
+    crossSectionAreaRange = np.linspace(0.1, 0.5, num=5)
     
     # with open("CsvData/tempRawReactorData.csv", "wb") as tempData:
     #     tempData.write(",".join([0,600,1,30,0.75,0.10,110,12,0.85]))
