@@ -4,7 +4,7 @@ from ReactorConstants import ReactorConstants
 class NumericalMethods:
     
     @staticmethod
-    def rk4_1step(inletPressure, inletTemperature, p, temperature, feedRate, Ac, a, Ta, F_Ph, F_H2O, F_CO, F_H2, F_CO2, phenolFraction):
+    def rk4_1step(inletPressure, inletTemperature, p, temperature, feedRate, Ac, a, Ta, F_Ph, F_H2O, F_CO, F_H2, F_CO2, phenolFraction, alpha):
         h = ReactorConstants.StepSize
         F_N2 = ReactorConstants.YI0 * feedRate
         m_calo = ReactorConstants.m_calo
@@ -25,12 +25,11 @@ class NumericalMethods:
         k1_C_CO = ReactorEquations.concentration(inletPressure, k1_p*inletPressure, inletTemperature, k1_temperature, k1_F_CO, k1_F_T)
         k1_C_H2 = ReactorEquations.concentration(inletPressure, k1_p*inletPressure, inletTemperature, k1_temperature, k1_F_H2, k1_F_T)
         k1_C_CO2 = ReactorEquations.concentration(inletPressure, k1_p*inletPressure, inletTemperature, k1_temperature, k1_F_CO2, k1_F_T)
-        k1_alpha = ReactorEquations.alpha(k1_p*inletPressure, inletTemperature, k1_temperature, phenolFraction, Ac, inletPressure, k1_F_T)
         k1_r_srp = ReactorEquations.r_srp(k1_temperature, k1_C_Ph, k1_C_H2O)
         k1_r_wgs = ReactorEquations.r_wgs(k1_temperature, k1_C_Ph, k1_C_CO, k1_C_H2O, k1_C_CO2, k1_C_H2)
         
         k1_dTdW = ReactorEquations.bilan_E(k1_temperature, k1_Ta, a, k1_F_Ph, k1_F_H2O, k1_F_H2, k1_F_CO, k1_F_CO2, F_N2, k1_C_Ph, k1_C_H2O, k1_C_CO, k1_C_CO2, k1_C_H2)
-        k1_dpdW = ReactorEquations.ergun(k1_alpha, k1_p, k1_temperature, inletTemperature, k1_F_T, feedRate)
+        k1_dpdW = ReactorEquations.ergun(alpha, k1_p, k1_temperature, inletTemperature, k1_F_T, feedRate)
         k1_dTadW = ReactorEquations.echange_chal(k1_temperature, k1_Ta, a, m_calo)
         k1_dF_Ph_dW = ReactorEquations.r_Ph(k1_r_srp) 
         k1_dF_H20_dW = ReactorEquations.r_H2O(k1_r_srp, k1_r_wgs) 
@@ -54,12 +53,11 @@ class NumericalMethods:
         k2_C_CO = ReactorEquations.concentration(inletPressure, k2_p*inletPressure, inletTemperature, k2_temperature, k2_F_CO, k2_F_T)
         k2_C_H2 = ReactorEquations.concentration(inletPressure, k2_p*inletPressure, inletTemperature, k2_temperature, k2_F_H2, k2_F_T)
         k2_C_CO2 = ReactorEquations.concentration(inletPressure, k2_p*inletPressure, inletTemperature, k2_temperature, k2_F_CO2, k2_F_T)
-        k2_alpha = ReactorEquations.alpha(k2_p*inletPressure, inletTemperature, k2_temperature, phenolFraction, Ac, inletPressure, k2_F_T)
         k2_r_srp = ReactorEquations.r_srp(k2_temperature, k2_C_Ph, k2_C_H2O)
         k2_r_wgs = ReactorEquations.r_wgs(k2_temperature, k2_C_Ph, k2_C_CO, k2_C_H2O, k2_C_CO2, k2_C_H2)
 
         k2_dTdW = ReactorEquations.bilan_E(k2_temperature, k2_Ta, a, k2_F_Ph, k2_F_H2O, k2_F_H2, k2_F_CO, k2_F_CO2, F_N2, k2_C_Ph, k2_C_H2O, k2_C_CO, k2_C_CO2, k2_C_H2)
-        k2_dpdW = ReactorEquations.ergun(k2_alpha, k2_p, k2_temperature, inletTemperature, k2_F_T, feedRate)
+        k2_dpdW = ReactorEquations.ergun(alpha, k2_p, k2_temperature, inletTemperature, k2_F_T, feedRate)
         k2_dTadW = ReactorEquations.echange_chal(k2_temperature, k2_Ta, a, m_calo)
         k2_dF_Ph_dW = ReactorEquations.r_Ph(k2_r_srp) 
         k2_dF_H2O_dW = ReactorEquations.r_H2O(k2_r_srp, k2_r_wgs) 
@@ -83,12 +81,11 @@ class NumericalMethods:
         k3_C_CO = ReactorEquations.concentration(inletPressure, k3_p*inletPressure, inletTemperature, k3_temperature, k3_F_CO, k3_F_T)
         k3_C_H2 = ReactorEquations.concentration(inletPressure, k3_p*inletPressure, inletTemperature, k3_temperature, k3_F_H2, k3_F_T)
         k3_C_CO2 = ReactorEquations.concentration(inletPressure, k3_p*inletPressure, inletTemperature, k3_temperature, k3_F_CO2, k3_F_T)
-        k3_alpha = ReactorEquations.alpha(k3_p*inletPressure, inletTemperature, k3_temperature, phenolFraction, Ac, inletPressure, k3_F_T)
         k3_r_srp = ReactorEquations.r_srp(k3_temperature, k3_C_Ph, k3_C_H2O)
         k3_r_wgs = ReactorEquations.r_wgs(k3_temperature, k3_C_Ph, k3_C_CO, k3_C_H2O, k3_C_CO2, k3_C_H2)
 
         k3_dTdW = ReactorEquations.bilan_E(k3_temperature, k3_Ta, a, k3_F_Ph, k3_F_H2O, k3_F_H2, k3_F_CO, k3_F_CO2, F_N2, k3_C_Ph, k3_C_H2O, k3_C_CO, k3_C_CO2, k3_C_H2)
-        k3_dpdW = ReactorEquations.ergun(k3_alpha, k3_p, k3_temperature, inletTemperature, k3_F_T, feedRate)
+        k3_dpdW = ReactorEquations.ergun(alpha, k3_p, k3_temperature, inletTemperature, k3_F_T, feedRate)
         k3_dTadW = ReactorEquations.echange_chal(k3_temperature, k3_Ta, a, m_calo)
         k3_dF_Ph_dW = ReactorEquations.r_Ph(k3_r_srp) 
         k3_dF_H2O_dW = ReactorEquations.r_H2O(k3_r_srp, k3_r_wgs) 
@@ -112,12 +109,11 @@ class NumericalMethods:
         k4_C_CO = ReactorEquations.concentration(inletPressure, k4_p*inletPressure, inletTemperature, k4_temperature, k4_F_CO, k4_F_T)
         k4_C_H2 = ReactorEquations.concentration(inletPressure, k4_p*inletPressure, inletTemperature, k4_temperature, k4_F_H2, k4_F_T)
         k4_C_CO2 = ReactorEquations.concentration(inletPressure, k4_p*inletPressure, inletTemperature, k4_temperature, k4_F_CO2, k4_F_T)
-        k4_alpha = ReactorEquations.alpha(k4_p*inletPressure, inletTemperature, k4_temperature, phenolFraction, Ac, inletPressure, k4_F_T)
         k4_r_srp = ReactorEquations.r_srp(k4_temperature, k4_C_Ph, k4_C_H2O)
         k4_r_wgs = ReactorEquations.r_wgs(k4_temperature, k4_C_Ph, k4_C_CO, k4_C_H2O, k4_C_CO2, k4_C_H2)
 
         k4_dTdW = ReactorEquations.bilan_E(k4_temperature, k4_Ta, a, k4_F_Ph, k4_F_H2O, k4_F_H2, k4_F_CO, k4_F_CO2, F_N2, k4_C_Ph, k4_C_H2O, k4_C_CO, k4_C_CO2, k4_C_H2)
-        k4_dpdW = ReactorEquations.ergun(k4_alpha, k4_p, k4_temperature, inletTemperature, k4_F_T, feedRate)
+        k4_dpdW = ReactorEquations.ergun(alpha, k4_p, k4_temperature, inletTemperature, k4_F_T, feedRate)
         k4_dTadW = ReactorEquations.echange_chal(k4_temperature, k4_Ta, a, m_calo)
         k4_dF_Ph_dW = ReactorEquations.r_Ph(k4_r_srp) 
         k4_dF_H2O_dW = ReactorEquations.r_H2O(k4_r_srp, k4_r_wgs) 

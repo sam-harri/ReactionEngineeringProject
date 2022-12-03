@@ -22,15 +22,15 @@ class ReactorEquations:
     @staticmethod
     def r_srp(temp: float, C_Ph: float, C_H2O: float):
         """
-        Loi de vitesse : reformage du phénol
-        Température en K, concentrations dm^3/L
+        temperature in K
+        C_j in mol/m^3
         """
-        k_srp: float = exp(7.63-39960/(8.314*temp))
-        K_P_eval: float = K_P.evaluate(temp)
-        K_H2O_eval: float = K_H2O.evaluate(temp)
+        k_srp: float = exp(7.63-39960/(8.314*temp)) / 3.6 # mol / kg * s
+        K_P_eval: float = K_P.evaluate(temp) #1 / atm
+        K_H2O_eval: float = K_H2O.evaluate(temp) #1 / atm
 
-        P_P: float = C_Ph*8.2057*10**(-5)*temp
-        P_H2O: float = C_H2O*8.2057*10**(-5)*temp
+        P_P: float = C_Ph*8.2057*10**(-5)*temp #atm
+        P_H2O: float = C_H2O*8.2057*10**(-5)*temp #atm
 
         return k_srp*K_P_eval*K_H2O_eval*(P_P*P_H2O**5)/(K_P_eval*P_P+K_H2O_eval*P_H2O+1)**2
 
@@ -40,17 +40,17 @@ class ReactorEquations:
         Loi de vitesse : water-gas shift (réversible)
         Température en K, concentrations dm^3/L
         """
-        k_wgs: float = exp(7.45-40100/(8.314*temp))
-        k_rwgs: float = exp(7.03-38840/(8.314*temp))
-        K_wgs: float = k_wgs/k_rwgs
-        K_P_eval: float = K_P.evaluate(temp)
-        K_H2O_eval: float = K_H2O.evaluate(temp)
+        k_wgs: float = exp(7.45-40100/(8.314*temp)) / 3.6 # mol / kg * s
+        k_rwgs: float = exp(7.03-38840/(8.314*temp)) / 3.6 # mol / kg * s
+        K_wgs: float = k_wgs/k_rwgs #adim
+        K_P_eval: float = K_P.evaluate(temp) #1 / atm
+        K_H2O_eval: float = K_H2O.evaluate(temp) #1 / atm
         
-        P_P: float = C_Ph*8.2057*10**(-5)*temp
-        P_CO: float = C_CO*8.2057*10**(-5)*temp
-        P_H2O: float = C_H2O*8.2057*10**(-5)*temp
-        P_CO2: float = C_CO2*8.2057*10**(-5)*temp
-        P_H2: float = C_H2*8.2057*10**(-5)*temp
+        P_P: float = C_Ph*8.2057*10**(-5)*temp  # atm
+        P_CO: float = C_CO*8.2057*10**(-5)*temp # atm
+        P_H2O: float = C_H2O*8.2057*10**(-5)*temp # atm
+        P_CO2: float = C_CO2*8.2057*10**(-5)*temp # atm
+        P_H2: float = C_H2*8.2057*10**(-5)*temp # atm
 
         return k_wgs*(P_CO*P_H2O-P_CO2*P_H2/K_wgs)/(K_P_eval*P_P+K_H2O_eval*P_H2O+1)**2
 
@@ -76,7 +76,7 @@ class ReactorEquations:
         return r_wgs
     
     @staticmethod
-    def alpha(P:float,T0:float, temp:float, x_Ph:float, A_c:float,P0:float,FT:float):
+    def alpha(P:float,T0:float, temp:float, x_Ph:float, A_c:float,P0:float,FT:float, phenolFraction):
         """
         Alpha de l'équation d'ergun
         T0 en K et P0 en Pa (conditions initiales)
@@ -87,21 +87,19 @@ class ReactorEquations:
         # rho_Ph est la masse volumique du PhOH aux conditions initiales
         # rho_c est la masse volumique des particules de catalyseur
         débit_vol : float = FT*8.2057*10**(-5)*temp/P
-        rho_Ph : float = 0.09411*P0/(8.2057*10**(-5)*T0) # 0.09411 kg/mol, masse molaire du PhOH
-        w_Ph : float = x_Ph*94.11/(x_Ph*94.11+(0.9-x_Ph)*18.02+1.401) # w_Ph est la fraction massique initiale de Ph
+        rho_Ph : float = 0.09411*P0/(8.2057*10**(-5)*T0)*phenolFraction # 0.09411 kg/mol, masse molaire du PhOH
+        w_Ph : float = x_Ph*94.11/(x_Ph*94.11+(0.9-x_Ph)*18.02+(0.1)*28.014) # w_Ph est la fraction massique initiale de Ph
         rho_0 : float = rho_Ph/w_Ph
         u : float = débit_vol/A_c
         G : float = rho_0*u
 
-        beta : float = -G*(1-phi)/(rho_0*1*D_eq*phi**3)*(150*(1-phi)*mu/D_eq+1.75*G)
+        beta : float = (((G*(1-phi))/(rho_0*1*D_eq*phi**3))*(((150*(1-phi)*mu)/D_eq)+(1.75*G))) / 101325
         return 2*beta/((1-phi)*A_c*rho_c*P0)
 
     @staticmethod
     def ergun(alpha:float, p:float, temp:float, T_0:float, F_T:float, F_T0:float):
         """
-        Loi de vitesse : water-gas shift (réversible)
-        Température en K, concentrations dm^3/L
-        dP/dW
+        Eq chute de pression
         """       
         return -alpha*temp*F_T/(2*p*T_0*F_T0)
     

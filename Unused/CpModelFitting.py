@@ -5,7 +5,6 @@ import numpy as np
 
 base = np.linspace(800,1100)
 
-#-0.00023050000x^2;0.51767215x^1;-268.3843301362517x^0
 xPhenol = np.array([800, 900, 1000,1100])
 yPhenol = np.array([212.14, 223.19, 232.49, 240.41])
 

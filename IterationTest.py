@@ -20,6 +20,8 @@ F_CO = 0
 F_H2 = 0
 F_CO2 = 0
 F_N2 = feedRate * ReactorConstants.YI0
+F_T = ReactorEquations.F_T(F_Ph, F_H2O, F_CO, F_H2, F_CO2, F_N2)
+alpha = ReactorEquations.alpha(inletPressure, inletTemperature, temperature, phenolFraction, Ac, inletPressure, F_T, phenolFraction)
 
 with open('testCsv.csv','w', newline="") as f:
     writer = csv.writer(f)
@@ -29,7 +31,7 @@ catalystWeigth = 0
 while(F_H2 < 25.0 and catalystWeigth < 1000):
     
     TdW, dpdW, dTadW, dF_Ph_dW, dF_H2O_dW, dF_CO_dW, dF_H2_dW, dF_CO2_dW = \
-    NumericalMethods.rk4_1step(inletPressure, inletTemperature, p, temperature, feedRate, Ac, a, Ta, F_Ph, F_H2O, F_CO, F_H2, F_CO2, phenolFraction)
+    NumericalMethods.rk4_1step(inletPressure, inletTemperature, p, temperature, feedRate, Ac, a, Ta, F_Ph, F_H2O, F_CO, F_H2, F_CO2, phenolFraction, alpha)
     temperature += h * TdW
     
     print("TdW :" + str(TdW))
