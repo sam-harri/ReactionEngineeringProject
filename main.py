@@ -1,10 +1,12 @@
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import make_pipeline
-from ReactorEquations import ReactorEquations
+from DimentionReactor import DimentionReactor
 import numpy as np
 import pandas as pd
-import csv
+import time
+
+start = time.time()
 
 #main method
 if(__name__ == "__main__"):
@@ -27,27 +29,17 @@ if(__name__ == "__main__"):
         "Feed Rate" : [],
         "Phenol Fraction" : [],
         "Cross Sectional Area" : [],
-        "Volume" : [],
+        "Weigth" : [],
         "Selectivity" : [],
-        "Conversion" : []}
+        "Conversion" : [],
+        "Yield" : []}
     )
     
     temperatureRange = np.linspace(873.15,1073.15, num=5)
     inletPressureRange = np.linspace(2,10, num=5)
-    feedRateRange = np.linspace(50,300,num=5)
+    feedRateRange = np.linspace(150,300,num=5)
     phenolFractionRange = np.linspace(0.01, 0.1, num=5)
     crossSectionAreaRange = np.linspace(0.1, 0.5, num=5)
-    
-    # with open("CsvData/tempRawReactorData.csv", "wb") as tempData:
-    #     tempData.write(",".join([0,600,1,30,0.75,0.10,110,12,0.85]))
-    #     tempData.write("\n")
-    #     tempData.write(",".join([1,650,2,33,1.00,0.05,100,11,0.90]))
-    #     tempData.write("\n")
-    # # testing the addition of rows to the data
-    # a = [0,600,1,30,0.75,0.10,110,12,0.85]
-    # rawDF.loc[len(rawDF.index)] = a
-    # b = [1,650,2,33,1.00,0.05,100,11,0.90]
-    # rawDF.loc[len(rawDF.index)] = b
     
     run = 0
     for inletTemperature in temperatureRange:
@@ -55,11 +47,8 @@ if(__name__ == "__main__"):
             for feedRate in feedRateRange:
                 for phenolFraction in phenolFractionRange:
                     for crossSectionalArea in crossSectionAreaRange:
-                        volume, selectivity, conversion = ReactorEquations.dimentionlizeReactor(inletTemperature,inletPressure,feedRate,phenolFraction,crossSectionalArea)
-                        if(volume==0):
-                            print(f'Run {run} : Failure')
-                        else:
-                            print(f'Run {run} : Success - {volume}, {selectivity}, {conversion}')
+                        weight, conversion, selectivity, rendement = DimentionReactor.dimentionlizeReactor(inletTemperature,inletPressure,feedRate,phenolFraction,crossSectionalArea)
+                        print(run)
                         tmp = np.array([
                             run,
                             inletTemperature,
@@ -67,32 +56,34 @@ if(__name__ == "__main__"):
                             feedRate,
                             phenolFraction,
                             crossSectionalArea,
-                            volume,
+                            weight,
                             selectivity,
-                            conversion])
-                        with open('CsvData/tempRawReactorData.csv','a', newline="") as f:
-                            writer = csv.writer(f)
-                            writer.writerow(tmp)
+                            conversion,
+                            rendement])
                         rawDF.loc[len(rawDF.index)] = tmp
                         run +=1
     
     rawDF.to_csv("CsvData/rawReactorData.csv", encoding='utf-8', index=False)
     
-    volMin = rawDF["Volume"].min()
+    weightMin = rawDF["Weigth"].min()
     selMax = rawDF["Selectivity"].max()
     convMax = rawDF["Conversion"].max()
+    rendementMax = rawDF["Yield"].max()
+    
     
     runNums = range(len(rawDF.index))
-    normVolArr = [volMin/i for i in rawDF["Volume"]]
+    normWeiArr = [weightMin/i for i in rawDF["Weigth"]]
     normSelArr = [i/selMax for i in rawDF["Selectivity"]]
     normConvArr = [i/convMax for i in rawDF["Conversion"]]
-    overallRating = [normVolArr[i]+normSelArr[i]+normConvArr[i] for i in runNums]
+    normRendArr = [i/rendementMax for i in rawDF["Yield"]]
+    overallRating = [normWeiArr[i]+normSelArr[i]+normConvArr[i]+normRendArr[i] for i in runNums]
     
     normDF = pd.DataFrame({
         "Run" : runNums,
-        "Normalized Volume" : normVolArr,
+        "Normalized Weigth" : normWeiArr,
         "Normalized Selectivity" : normSelArr,
         "Normalized Conversion" : normConvArr,
+        "Normalized Yield" : normRendArr,
         "Overall Efficiency" : overallRating 
     })
     normDF.to_csv("CsvData/processedReactorData.csv", encoding='utf-8', index=False)
@@ -100,22 +91,26 @@ if(__name__ == "__main__"):
     fullDF = pd.merge(rawDF, normDF, on="Run", how="inner")
     fullDF.to_csv("CsvData/fullReactorData.csv", encoding="utf-8", index=False)
     
-    reactorModel = make_pipeline(
-        PolynomialFeatures(degree=3),
-        LinearRegression()
-    )
+    stop = time.time()
     
-    reactorModel.fit(fullDF[[
-        "Temperature",
-        "Pressure",
-        "Feed Rate",
-        "Phenol Fraction",
-        "Cross Sectional Area"]],
-        fullDF[['Overall Efficiency']])
+    print(stop-start, end="")
+    
+    # reactorModel = make_pipeline(
+    #     PolynomialFeatures(degree=3),
+    #     LinearRegression()
+    # )
+    
+    # reactorModel.fit(fullDF[[
+    #     "Temperature",
+    #     "Pressure",
+    #     "Feed Rate",
+    #     "Phenol Fraction",
+    #     "Cross Sectional Area"]],
+    #     fullDF[['Overall Efficiency']])
     
     
     
-    print(fullDF)
+    # print(fullDF)
     
     # t_surf, p_surf, fr_surf, pf_surf, csa_surf = np.meshgrid(
     #     temperatureRange,
