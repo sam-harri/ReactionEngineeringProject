@@ -6,11 +6,17 @@ import time
 
 start = time.time()
 
-inletTemperature = 973.15 #K
-inletPressure = 3 #atm
-feedRate = 175 #mol/s
-phenolFraction = 0.02 #molPh/mol
-Ac = 0.4 #m^2
+inletTemperature = 1023.15 #K
+inletPressure = 6 #atm
+feedRate = 225 #mol/s
+phenolFraction = 0.0775 #molPh/mol
+Ac = 0.5 #m^2
+
+# inletTemperature = 973.15 #K
+# inletPressure = 3 #atm
+# feedRate = 175 #mol/s
+# phenolFraction = 0.02 #molPh/mol
+# Ac = 0.4 #m^2
 
 h = ReactorConstants.StepSize
 a = ReactorEquations.a(Ac)
@@ -35,8 +41,8 @@ while(F_H2 < 25.0 and catalystWeigth < 30 and p>0):
     
     TdW, dpdW, dTadW, dF_Ph_dW, dF_H2O_dW, dF_CO_dW, dF_H2_dW, dF_CO2_dW = \
     NumericalMethods.rk4_1step(inletPressure, inletTemperature, p, temperature, feedRate, Ac, a, Ta, F_Ph, F_H2O, F_CO, F_H2, F_CO2, phenolFraction, alpha)
+    
     temperature += h * TdW
-
     p += h * dpdW
     Ta += h * dTadW
     F_Ph += h * dF_Ph_dW

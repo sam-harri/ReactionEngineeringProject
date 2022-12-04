@@ -39,7 +39,7 @@ if(__name__ == "__main__"):
     inletPressureRange = np.linspace(2,10, num=5)
     feedRateRange = np.linspace(150,300,num=5)
     phenolFractionRange = np.linspace(0.01, 0.1, num=5)
-    crossSectionAreaRange = np.linspace(0.1, 0.5, num=5)
+    crossSectionAreaRange = np.linspace(0.05, 0.2, num=5)
     
     run = 0
     for inletTemperature in temperatureRange:
@@ -62,6 +62,11 @@ if(__name__ == "__main__"):
                             rendement])
                         rawDF.loc[len(rawDF.index)] = tmp
                         run +=1
+
+    print(rawDF.shape)                    
+    index_names = rawDF[rawDF['Weigth'] == 0].index
+    rawDF.drop(index_names, inplace = True)
+    print(rawDF.shape)
     
     rawDF.to_csv("CsvData/rawReactorData.csv", encoding='utf-8', index=False)
     
@@ -69,7 +74,6 @@ if(__name__ == "__main__"):
     selMax = rawDF["Selectivity"].max()
     convMax = rawDF["Conversion"].max()
     rendementMax = rawDF["Yield"].max()
-    
     
     runNums = range(len(rawDF.index))
     normWeiArr = [weightMin/i for i in rawDF["Weigth"]]
@@ -93,7 +97,7 @@ if(__name__ == "__main__"):
     
     stop = time.time()
     
-    print(stop-start, end="")
+    print(str((stop-start)//60) + "minutes and " + str((stop-start)%60) + " seconds")
     
     # reactorModel = make_pipeline(
     #     PolynomialFeatures(degree=3),

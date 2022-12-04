@@ -20,6 +20,6 @@ class ReactorConstants:
     mu: float = 24.59*10**(-6) #Pa*s, viscosité à 700 deg C, 1 atm, 10% mol N2 et 90% mol H2O
     Cp_calo: float = 4187 # J/(kg*K), Cp de l'eau à 15 deg C (https://www.engineeringtoolbox.com/water-thermal-properties)
     T_calo_in: float = 288.15 # K, température de l'eau à l'entrée
-    StepSize : float = 0.01 #kg of catalyst
+    StepSize : float = 0.0001 #kg of catalyst
     
     m_calo: float = 2 #temp

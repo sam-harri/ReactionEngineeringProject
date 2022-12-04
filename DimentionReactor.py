@@ -22,7 +22,7 @@ class DimentionReactor:
         alpha = ReactorEquations.alpha(inletPressure, inletTemperature, temperature, phenolFraction, Ac, inletPressure, F_T, phenolFraction)
         
         catalystWeigth = 0
-        while(F_H2 < 25.0 and catalystWeigth < 5 and p>0):
+        while(F_H2 < 25.0 and catalystWeigth < 15 and p>0):
             TdW, dpdW, dTadW, dF_Ph_dW, dF_H2O_dW, dF_CO_dW, dF_H2_dW, dF_CO2_dW = \
             NumericalMethods.rk4_1step(inletPressure, inletTemperature, p, temperature, feedRate, Ac, a, Ta, F_Ph, F_H2O, F_CO, F_H2, F_CO2, phenolFraction, alpha)
             temperature += h * TdW
