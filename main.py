@@ -36,7 +36,7 @@ if(__name__ == "__main__"):
     )
     
     temperatureRange = np.linspace(873.15,1073.15, num=5)
-    inletPressureRange = np.linspace(2,10, num=5)
+    inletPressureRange = np.linspace(4,15, num=5)
     feedRateRange = np.linspace(150,300,num=5)
     phenolFractionRange = np.linspace(0.01, 0.1, num=5)
     crossSectionAreaRange = np.linspace(0.05, 0.2, num=5)
@@ -70,24 +70,26 @@ if(__name__ == "__main__"):
     
     rawDF.to_csv("CsvData/rawReactorData.csv", encoding='utf-8', index=False)
     
+    
+    
     weightMin = rawDF["Weigth"].min()
     selMax = rawDF["Selectivity"].max()
     convMax = rawDF["Conversion"].max()
-    rendementMax = rawDF["Yield"].max()
+    yieldMax = rawDF["Yield"].max()
     
     runNums = range(len(rawDF.index))
     normWeiArr = [weightMin/i for i in rawDF["Weigth"]]
     normSelArr = [i/selMax for i in rawDF["Selectivity"]]
     normConvArr = [i/convMax for i in rawDF["Conversion"]]
-    normRendArr = [i/rendementMax for i in rawDF["Yield"]]
-    overallRating = [normWeiArr[i]+normSelArr[i]+normConvArr[i]+normRendArr[i] for i in runNums]
+    normYieldArr = [i/yieldMax for i in rawDF["Yield"]]
+    overallRating = [normWeiArr[i]+normSelArr[i]+normConvArr[i]+normYieldArr[i] for i in runNums]
     
     normDF = pd.DataFrame({
-        "Run" : runNums,
+        "Run" : rawDF["Run"],
         "Normalized Weigth" : normWeiArr,
         "Normalized Selectivity" : normSelArr,
         "Normalized Conversion" : normConvArr,
-        "Normalized Yield" : normRendArr,
+        "Normalized Yield" : normYieldArr,
         "Overall Efficiency" : overallRating 
     })
     normDF.to_csv("CsvData/processedReactorData.csv", encoding='utf-8', index=False)

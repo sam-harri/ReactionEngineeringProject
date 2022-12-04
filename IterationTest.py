@@ -7,10 +7,10 @@ import time
 start = time.time()
 
 inletTemperature = 1023.15 #K
-inletPressure = 6 #atm
-feedRate = 225 #mol/s
-phenolFraction = 0.0775 #molPh/mol
-Ac = 0.5 #m^2
+inletPressure = 10 #atm
+feedRate = 150 #mol/s
+phenolFraction = 0.04 #molPh/mol
+Ac = 0.05 #m^2
 
 # inletTemperature = 973.15 #K
 # inletPressure = 3 #atm
@@ -18,7 +18,7 @@ Ac = 0.5 #m^2
 # phenolFraction = 0.02 #molPh/mol
 # Ac = 0.4 #m^2
 
-h = ReactorConstants.StepSize
+h = 0.001
 a = ReactorEquations.a(Ac)
 temperature = inletTemperature
 p = 1
@@ -59,6 +59,9 @@ while(F_H2 < 25.0 and catalystWeigth < 30 and p>0):
     catalystWeigth += h
     
 end = time.time()
+
+if(F_H2 < 25.0):
+    print("poop")
 
 print("The time of execution of above program is :",
       (end-start) * 10**3, "ms")
