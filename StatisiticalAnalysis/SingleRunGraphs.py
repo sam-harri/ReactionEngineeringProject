@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from ReactorConstants import ReactorConstants
 from ReactorEquations import ReactorEquations
 from NumericalMethods import NumericalMethods
@@ -12,11 +15,6 @@ feedRate = 150 #mol/s
 phenolFraction = 0.04 #molPh/mol
 Ac = 0.05 #m^2
 
-# inletTemperature = 973.15 #K
-# inletPressure = 3 #atm
-# feedRate = 175 #mol/s
-# phenolFraction = 0.02 #molPh/mol
-# Ac = 0.4 #m^2
 
 h = 0.0001
 a = ReactorEquations.a(Ac)
@@ -101,7 +99,7 @@ print("The time of execution of above program is :",
       (end-start) * 10**3, "ms")
 
 
-figure, axis = plt.subplots(3, 1)
+figure, axis = plt.subplots(1, 1)
 figure.set_figheight(10)
 figure.set_figwidth(10)
 figure.tight_layout(pad=8.0)
