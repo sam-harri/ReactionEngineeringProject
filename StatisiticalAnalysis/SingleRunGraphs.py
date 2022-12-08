@@ -13,7 +13,7 @@ start = time.time()
 ###########################################
 ###########Anthony Graph Section###########
 ###########################################
-inletTemperature = 1023.15 #K
+inletTemperature = 1073.15 #K
 inletPressure = 10 #atm
 feedRate = 150 #mol/s
 phenolFraction = 0.04 #molPh/mol
