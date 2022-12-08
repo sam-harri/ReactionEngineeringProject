@@ -9,15 +9,15 @@ import time
 
 start = time.time()
 
-
+#1073.15,15.0,150.0,0.0325,0.2
 ###########################################
 ###########Anthony Graph Section###########
 ###########################################
-inletTemperature = 1023.15 #K
-inletPressure = 10 #atm
+inletTemperature = 1073.15 #K
+inletPressure = 15 #atm
 feedRate = 150 #mol/s
-phenolFraction = 0.04 #molPh/mol
-Ac = 0.05 #m^2
+phenolFraction = 0.0325 #molPh/mol
+Ac = 0.02 #m^2
 
 
 h = 0.0001
