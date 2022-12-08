@@ -9,6 +9,10 @@ import time
 
 start = time.time()
 
+
+###########################################
+###########Anthony Graph Section###########
+###########################################
 inletTemperature = 1023.15 #K
 inletPressure = 10 #atm
 feedRate = 150 #mol/s
@@ -99,38 +103,48 @@ print("The time of execution of above program is :",
       (end-start) * 10**3, "ms")
 
 
-figure, axis = plt.subplots(1, 1)
-figure.set_figheight(10)
-figure.set_figwidth(10)
-figure.tight_layout(pad=8.0)
+concFig, concAxis = plt.subplots(1, 1)
+concFig.set_figheight(10)
+concFig.set_figwidth(10)
+concFig.tight_layout(pad=8.0)
 
-axis[0].plot(catalystWeigtharr, C_Ph_arr, c='blue', label='Phenol')
-axis[0].plot(catalystWeigtharr, C_H2O_arr, c='orange', label='H2O')
-axis[0].plot(catalystWeigtharr, C_CO_arr, c='red', label='CO')
-axis[0].plot(catalystWeigtharr, C_H2_arr, c='purple', label='H2')
-axis[0].plot(catalystWeigtharr, C_CO2_arr, c='cyan', label='CO2')
-axis[0].plot(catalystWeigtharr, C_N2_arr, c='pink', label='N2')
-axis[0].legend()
-axis[0].set_title("Concentration des especes en fonction de la masse du catalyseur")
-axis[0].set_xlabel('Masse du Catalyseur [kg]')
-axis[0].set_ylabel('Concentration [mol/m^3]')
+concAxis.plot(catalystWeigtharr, C_Ph_arr, c='blue', label='Phenol')
+concAxis.plot(catalystWeigtharr, C_H2O_arr, c='orange', label='H2O')
+concAxis.plot(catalystWeigtharr, C_CO_arr, c='red', label='CO')
+concAxis.plot(catalystWeigtharr, C_H2_arr, c='purple', label='H2')
+concAxis.plot(catalystWeigtharr, C_CO2_arr, c='cyan', label='CO2')
+concAxis.plot(catalystWeigtharr, C_N2_arr, c='pink', label='N2')
+concAxis.legend()
+concAxis.set_title("Concentration des especes en fonction de la masse du catalyseur")
+concAxis.set_xlabel('Masse du Catalyseur [kg]')
+concAxis.set_ylabel('Concentration [mol/m^3]')
 
 
-axis[1].plot(catalystWeigtharr, F_Ph_arr, c='blue', label='Phenol')
-axis[1].plot(catalystWeigtharr, F_H2O_arr, c='orange', label='H2O')
-axis[1].plot(catalystWeigtharr, F_CO_arr, c='red', label='CO')
-axis[1].plot(catalystWeigtharr, F_H2_arr, c='purple', label='H2')
-axis[1].plot(catalystWeigtharr, F_CO2_arr, c='cyan', label='CO2')
-axis[1].plot(catalystWeigtharr, F_N2_arr, c='pink', label='N2')
-axis[1].legend()
-axis[1].set_title("Debit molaire des especes en fonction de la masse du catalyseur")
-axis[1].set_xlabel('Masse du Catalyseur [kg]')
-axis[1].set_ylabel('Debit Molaire [mol/s]')
+flowFig, flowAxis = plt.subplots(1, 1)
+flowFig.set_figheight(10)
+flowFig.set_figwidth(10)
+flowFig.tight_layout(pad=8.0)
 
-axis[2].plot(catalystWeigtharr, conversionarr, c='purple', label='Conversion')
-axis[2].legend()
-axis[2].set_title("Conversion de phenol en fonction de la masse du catalyseur")
-axis[2].set_xlabel('Masse du Catalyseur [kg]')
-axis[2].set_ylabel('Conversion')
+flowAxis.plot(catalystWeigtharr, F_Ph_arr, c='blue', label='Phenol')
+flowAxis.plot(catalystWeigtharr, F_H2O_arr, c='orange', label='H2O')
+flowAxis.plot(catalystWeigtharr, F_CO_arr, c='red', label='CO')
+flowAxis.plot(catalystWeigtharr, F_H2_arr, c='purple', label='H2')
+flowAxis.plot(catalystWeigtharr, F_CO2_arr, c='cyan', label='CO2')
+flowAxis.plot(catalystWeigtharr, F_N2_arr, c='pink', label='N2')
+flowAxis.legend()
+flowAxis.set_title("Debit molaire des especes en fonction de la masse du catalyseur")
+flowAxis.set_xlabel('Masse du Catalyseur [kg]')
+flowAxis.set_ylabel('Debit Molaire [mol/s]')
+
+convFig, convAxis = plt.subplots(1, 1)
+convFig.set_figheight(10)
+convFig.set_figwidth(10)
+convFig.tight_layout(pad=8.0)
+
+convAxis.plot(catalystWeigtharr, conversionarr, c='purple', label='Conversion')
+convAxis.legend()
+convAxis.set_title("Conversion de phenol en fonction de la masse du catalyseur")
+convAxis.set_xlabel('Masse du Catalyseur [kg]')
+convAxis.set_ylabel('Conversion')
 
 plt.show()
