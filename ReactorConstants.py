@@ -22,4 +22,4 @@ class ReactorConstants:
     T_calo_in: float = 288.15 # K, température de l'eau à l'entrée
     StepSize : float = 0.0001 #kg of catalyst
     
-    m_calo: float = 2 #temp
+    m_calo: float = 2 #kg/s
