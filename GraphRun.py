@@ -574,5 +574,3 @@ def GraphRun(t, pres, fr, pf, ar, ss):
         convAxis.set_ylabel('Conversion')
 
         plt.show()
-        
-GraphRun(973.15,15.0,150.0,0.0325,0.2,0.0001)
