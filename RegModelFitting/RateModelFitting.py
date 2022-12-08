@@ -3,6 +3,9 @@ from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 import numpy as np
 
+####################################################################################################################################################################
+#Data Prep
+####################################################################################################################################################################
 base = np.linspace(800,1100)
 
 #-0.00023050000x^2;0.51767215x^1;-268.3843301362517x^0
@@ -25,6 +28,9 @@ yKP = np.array([1.67, 3.23, 5.61])
 xKH2O = np.array([873.15, 973.15, 1073.15])
 yKH2O = np.array([5.78, 7.96, 11.63])
 
+####################################################################################################################################################################
+#Model Fitting
+####################################################################################################################################################################
 #kSRP model training
 poly_SRP = PolynomialFeatures(degree=2, include_bias=False)
 poly_features_SRP = poly_SRP.fit_transform(xSRP.reshape(-1, 1))
@@ -55,7 +61,6 @@ poly_features_KH2O = poly_KH2O.fit_transform(xKH2O.reshape(-1, 1))
 poly_reg_model_KH2O = LinearRegression()
 poly_reg_model_KH2O.fit(poly_features_KH2O, yKH2O)
 
-
 #Running data through predicted model to plot polynomial
 ySRP_train = poly_reg_model_SRP.predict(poly_features_SRP)
 ySRP_test = poly_reg_model_SRP.predict(poly_SRP.fit_transform(base.reshape(-1, 1)))
@@ -72,6 +77,10 @@ yKP_test = poly_reg_model_KP.predict(poly_KP.fit_transform(base.reshape(-1, 1)))
 yKH2O_train = poly_reg_model_KH2O.predict(poly_features_KH2O)
 yKH2O_test = poly_reg_model_KH2O.predict(poly_KH2O.fit_transform(base.reshape(-1, 1)))
 
+
+####################################################################################################################################################################
+#Plotting Data
+####################################################################################################################################################################
 figure, axis = plt.subplots(2, 1)
 figure.set_figheight(10)
 figure.set_figwidth(10)
@@ -100,30 +109,3 @@ axis[1].set_xlabel('Temperature (K)')
 axis[1].set_ylabel('Equilibrium Constant (mol / g-cat*h)')
 
 plt.show()
-
-# plt.figure(figsize=(11, 7))
-
-# plt.scatter(xSRP,ySRP, color='mediumorchid')
-# plt.scatter(xWGS, yWGS, color='mediumslateblue')
-# plt.scatter(xRWGS, yRWGS, color='lightseagreen')
-
-# plt.plot(base, ySRP_test, c='mediumorchid', label='SRP')
-# plt.plot(base, yWGS_test, c='mediumslateblue', label='WGS')
-# plt.plot(base, yRWGS_test, c='lightseagreen', label='RWGS')
-# plt.legend()
-
-# plt.title("LSS Polynomial Regression Models of Kinetic Parameters of SRP Reactions using NTZ Catalyst")
-# plt.xlabel('Temperature (K)')
-# plt.ylabel('Rate Constant (mol / g-cat*h)')
-
-# plt.show()
-
-#test point, copy paste code below and change point for model prediction
-# point = 873.15
-# SRP_estimation = poly_reg_model_SRP.predict(poly_SRP.fit_transform([[point]]))
-# WGS_estimation = poly_reg_model_WGS.predict(poly_WGS.fit_transform([[point]]))
-# RWGS_estimation = poly_reg_model_RWGS.predict(poly_RWGS.fit_transform([[point]]))
-
-
-# print(poly_reg_model_RWGS.coef_)
-# print(poly_reg_model_RWGS.intercept_)

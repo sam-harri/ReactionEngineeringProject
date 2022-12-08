@@ -4,10 +4,8 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 df = pd.read_csv("CsvData/fullReactorData.csv")
 
-#Run     Temperature   Pressure   Feed Rate   Phenol Fraction    Cross Sectional Area   ||Weigth,Selectivity,Conversion,Yield
-#1759.0  973.15        15.0       150.0       0.0325             0.2                    ||0.0056,1.3333370882082305,0.6442465974217444,8.000009655377054
 ####################################################################################################################################################################
-#Graph Data
+#Data Prep
 ####################################################################################################################################################################
 #temp graph Data
 dfTemp = df[(df["Pressure"]==15.0) & (df["Feed Rate"]==150.0) & (df["Phenol Fraction"]==0.0325) & (df["Cross Sectional Area"]==0.2)]
