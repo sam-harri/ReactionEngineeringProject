@@ -1,16 +1,16 @@
-from ReactorConstants import ReactorConstants
-from ReactorEquations import ReactorEquations
-from NumericalMethods import NumericalMethods
+import ReactorConstants
+import ReactorEquations
+import NumericalMethods
 import matplotlib.pyplot as plt
 
-def GraphRun(temperature, pressure, feedRate, phenolFraction, Ac, h):
-    inletTemperature = 1073.15 #K
-    inletPressure = 15 #atm
-    feedRate = 150 #mol/s
-    phenolFraction = 0.0325 #molPh/mol
-    Ac = 0.02 #m^2
+def GraphRun(t, pres, fr, pf, ar, ss):
+    inletTemperature =  t#K
+    inletPressure = pres #atm
+    feedRate = fr #mol/s
+    phenolFraction = pf #molPh/mol
+    Ac = ar #m^2
 
-    h = 0.0001 #Step Size
+    h = ss #Step Size
 
     ####################################################################################################################################################################
     #Constant and Array Declaration
