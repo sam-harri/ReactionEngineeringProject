@@ -94,14 +94,14 @@ class NumericalMethods:
         k3_dF_CO2_dW = ReactorEquations.r_CO2(k3_r_wgs)
 
         #k4 calculation
-        k4_temperature = temperature + (h * 0.5 * k3_temperature)
-        k4_p = p + (h * 0.5 * k3_p)
-        k4_Ta = Ta + (h * 0.5 * k3_Ta)
-        k4_F_Ph = F_Ph + (h * 0.5 * k3_F_Ph)
-        k4_F_H2O = F_H2O + (h * 0.5 * k3_F_H2O)
-        k4_F_CO = F_CO + (h * 0.5 * k3_F_CO)
-        k4_F_H2 = F_H2 + (h * 0.5 * k3_F_H2)
-        k4_F_CO2 = F_CO2 + (h * 0.5 * k3_F_CO2)
+        k4_temperature = temperature + (h * k3_temperature)
+        k4_p = p + (h * k3_p)
+        k4_Ta = Ta + (h * k3_Ta)
+        k4_F_Ph = F_Ph + (h * k3_F_Ph)
+        k4_F_H2O = F_H2O + (h * k3_F_H2O)
+        k4_F_CO = F_CO + (h * k3_F_CO)
+        k4_F_H2 = F_H2 + (h * k3_F_H2)
+        k4_F_CO2 = F_CO2 + (h * k3_F_CO2)
         k4_F_T = ReactorEquations.F_T(k4_F_Ph, k4_F_H2O, k4_F_CO, k4_F_H2, k4_F_CO2, F_N2)
         
         k4_C_Ph = ReactorEquations.concentration(inletPressure, k4_p*inletPressure, inletTemperature, k4_temperature, k4_F_Ph, k4_F_T)
