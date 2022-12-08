@@ -12,10 +12,10 @@ start = time.time()
 if(__name__ == "__main__"):
     
     csvFiles = [
-        "CsvData/rawReactorData.csv",
-        "CsvData/processedReactorData.csv",
-        "CsvData/fullReactorData.csv",
-        "CsvData/tempRawReactorData.csv"]
+        "CsvData2/rawReactorData.csv",
+        "CsvData2/processedReactorData.csv",
+        "CsvData2/fullReactorData.csv",
+        "CsvData2/tempRawReactorData.csv"]
     
     for csvData in csvFiles:
         tmp = open(csvData, "w")
@@ -68,7 +68,7 @@ if(__name__ == "__main__"):
     rawDF.drop(index_names, inplace = True)
     print(rawDF.shape)
     
-    rawDF.to_csv("CsvData/rawReactorData.csv", encoding='utf-8', index=False)
+    rawDF.to_csv("CsvData2/rawReactorData.csv", encoding='utf-8', index=False)
     
     
     
@@ -92,10 +92,10 @@ if(__name__ == "__main__"):
         "Normalized Yield" : normYieldArr,
         "Overall Efficiency" : overallRating 
     })
-    normDF.to_csv("CsvData/processedReactorData.csv", encoding='utf-8', index=False)
+    normDF.to_csv("CsvData2/processedReactorData.csv", encoding='utf-8', index=False)
     
     fullDF = pd.merge(rawDF, normDF, on="Run", how="inner")
-    fullDF.to_csv("CsvData/fullReactorData.csv", encoding="utf-8", index=False)
+    fullDF.to_csv("CsvData2/fullReactorData.csv", encoding="utf-8", index=False)
     
     stop = time.time()
     
