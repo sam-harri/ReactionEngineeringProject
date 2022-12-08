@@ -4,35 +4,32 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 df = pd.read_csv("CsvData/fullReactorData.csv")
 
-#Run     Temperature   Pressure   Feed Rate   Phenol Fraction    Cross Sectional Area   ||Weigth,Selectivity,Conversion,Yield
-#1759.0  973.15        15.0       150.0       0.0325             0.2                    ||0.0056,1.3333370882082305,0.6442465974217444,8.000009655377054
-
-#temp graph Data
+####################################################################################################################################################################
+#Data Prep
+####################################################################################################################################################################
 dfTemp = df[(df["Pressure"]==15.0) & (df["Feed Rate"]==150.0) & (df["Phenol Fraction"]==0.0325) & (df["Cross Sectional Area"]==0.2)]
 temp = np.array(dfTemp["Temperature"].values)
 tempEff = np.array(dfTemp["Overall Efficiency"].values)
 
-#pressure graph Data
 dfPressure = df[(df["Temperature"]==973.15) & (df["Feed Rate"]==150.0) & (df["Phenol Fraction"]==0.0325) & (df["Cross Sectional Area"]==0.2)]
 pressure = np.array(dfPressure["Pressure"].values)
 pressureEff = np.array(dfPressure["Overall Efficiency"].values)
 
-#Feed Rate graph
 dfFeed = df[(df["Temperature"]==973.15) & (df["Pressure"]==15.0) & (df["Phenol Fraction"]==0.0325) & (df["Cross Sectional Area"]==0.2)]
 feed = np.array(dfFeed["Feed Rate"].values)
 feedEff = np.array(dfFeed["Overall Efficiency"].values)
 
-#Phenol Fraction graph
 dfPhenol = df[(df["Temperature"]==973.15) & (df["Pressure"]==15.0) & (df["Feed Rate"]==150.0) & (df["Cross Sectional Area"]==0.2)]
 phenol = np.array(dfPhenol["Phenol Fraction"].values)
 phenolEff = np.array(dfPhenol["Overall Efficiency"].values)
 
-#Cross Sectional Area graph
 dfArea = df[(df["Temperature"]==973.15) & (df["Pressure"]==15.0) & (df["Feed Rate"]==150.0) & (df["Phenol Fraction"]==0.0325)]
 area = np.array(dfArea["Cross Sectional Area"].values)
 areaEff = np.array(dfArea["Overall Efficiency"].values)
 
-#Modeling Section
+####################################################################################################################################################################
+#Model Fitting
+####################################################################################################################################################################
 tempModel = LinearRegression()
 tempModel.fit(temp.reshape(-1,1), tempEff.reshape(-1,1))
 tempX = np.linspace(temp.min(), temp.max(), 5)
@@ -58,8 +55,9 @@ areaModel.fit(area.reshape(-1,1), areaEff.reshape(-1,1))
 areaX = np.linspace(area.min(), area.max(), 5)
 areaY = areaModel.predict(areaX.reshape(-1,1))
 
-
-#Graph Creation
+####################################################################################################################################################################
+#Plotting Data
+####################################################################################################################################################################
 plt.subplots_adjust(hspace=0.5, wspace=5)
 
 ax1 = plt.subplot2grid(shape=(2,6), loc=(0,0), colspan=2)
