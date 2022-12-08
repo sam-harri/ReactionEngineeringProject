@@ -9,53 +9,53 @@ df = pd.read_csv("CsvData/fullReactorData.csv")
 
 #temp graph Data
 dfTemp = df[(df["Pressure"]==15.0) & (df["Feed Rate"]==150.0) & (df["Phenol Fraction"]==0.0325) & (df["Cross Sectional Area"]==0.2)]
-temp = dfTemp["Temperature"]
-tempEff = dfTemp["Overall Efficiency"]
+temp = np.array(dfTemp["Temperature"].values)
+tempEff = np.array(dfTemp["Overall Efficiency"].values)
 
 #pressure graph Data
 dfPressure = df[(df["Temperature"]==973.15) & (df["Feed Rate"]==150.0) & (df["Phenol Fraction"]==0.0325) & (df["Cross Sectional Area"]==0.2)]
-pressure = dfPressure["Pressure"]
-pressureEff = dfPressure["Overall Efficiency"]
+pressure = np.array(dfPressure["Pressure"].values)
+pressureEff = np.array(dfPressure["Overall Efficiency"].values)
 
 #Feed Rate graph
 dfFeed = df[(df["Temperature"]==973.15) & (df["Pressure"]==15.0) & (df["Phenol Fraction"]==0.0325) & (df["Cross Sectional Area"]==0.2)]
-feed = dfFeed["Feed Rate"]
-feedArr = dfFeed["Overall Efficiency"]
+feed = np.array(dfFeed["Feed Rate"].values)
+feedEff = np.array(dfFeed["Overall Efficiency"].values)
 
 #Phenol Fraction graph
 dfPhenol = df[(df["Temperature"]==973.15) & (df["Pressure"]==15.0) & (df["Feed Rate"]==150.0) & (df["Cross Sectional Area"]==0.2)]
-phenol = dfPhenol["Phenol Fraction"]
-phenolArr = dfPhenol["Overall Efficiency"]
+phenol = np.array(dfPhenol["Phenol Fraction"].values)
+phenolEff = np.array(dfPhenol["Overall Efficiency"].values)
 
 #Cross Sectional Area graph
 dfArea = df[(df["Temperature"]==973.15) & (df["Pressure"]==15.0) & (df["Feed Rate"]==150.0) & (df["Phenol Fraction"]==0.0325)]
-area = dfArea["Cross Sectional Area"]
-areaEff = dfArea["Overall Efficiency"]
+area = np.array(dfArea["Cross Sectional Area"].values)
+areaEff = np.array(dfArea["Overall Efficiency"].values)
 
 #Modeling Section
 tempModel = LinearRegression()
-tempModel.fit(dfTemp[["Temperature"]].values, dfTemp[["Overall Efficiency"]].values)
-tempX = np.linspace(dfTemp["Temperature"].min(), dfTemp["Temperature"].max(), 5)
+tempModel.fit(temp.reshape(-1,1), tempEff.reshape(-1,1))
+tempX = np.linspace(temp.min(), temp.max(), 5)
 tempY = tempModel.predict(tempX.reshape(-1,1))
 
 pressureModel = LinearRegression()
-pressureModel.fit(dfPressure[["Pressure"]].values, dfPressure[["Overall Efficiency"]].values)
-pressureX = np.linspace(dfPressure["Pressure"].min(), dfPressure["Pressure"].max(), 5)
+pressureModel.fit(pressure.reshape(-1,1), pressureEff.reshape(-1,1))
+pressureX = np.linspace(pressure.min(), pressure.max(), 5)
 pressureY = pressureModel.predict(pressureX.reshape(-1,1))
 
 feedModel = LinearRegression()
-feedModel.fit(dfFeed[["Feed Rate"]].values, dfFeed[["Overall Efficiency"]].values)
-feedX = np.linspace(dfFeed["Feed Rate"].min(), dfFeed["Feed Rate"].max(), 5)
+feedModel.fit(feed.reshape(-1,1), feedEff.reshape(-1,1))
+feedX = np.linspace(feed.min(), feed.max(), 5)
 feedY = feedModel.predict(feedX.reshape(-1,1))
 
 phenolModel = LinearRegression()
-phenolModel.fit(dfPhenol[["Phenol Fraction"]].values, dfPhenol[["Overall Efficiency"]].values)
-phenolX = np.linspace(dfPhenol["Phenol Fraction"].min(), dfPhenol["Phenol Fraction"].max(), 5)
+phenolModel.fit(phenol.reshape(-1,1), phenolEff.reshape(-1,1))
+phenolX = np.linspace(phenol.min(), phenol.max(), 5)
 phenolY = phenolModel.predict(phenolX.reshape(-1,1))
 
 areaModel = LinearRegression()
-areaModel.fit(dfArea[["Cross Sectional Area"]].values, dfArea[["Overall Efficiency"]].values)
-areaX = np.linspace(dfArea["Cross Sectional Area"].min(), dfArea["Cross Sectional Area"].max(), 5)
+areaModel.fit(area.reshape(-1,1), areaEff.reshape(-1,1))
+areaX = np.linspace(area.min(), area.max(), 5)
 areaY = areaModel.predict(areaX.reshape(-1,1))
 
 
@@ -80,13 +80,13 @@ ax2.set_title("Variable Pressure")
 ax2.set_xlabel("Pressure [atm]")
 ax2.set_ylabel("Dimentionless Efficiency")
 
-ax3.scatter(feed, feedArr, c='magenta')
+ax3.scatter(feed, feedEff, c='magenta')
 ax3.plot(feedX, feedY, c='magenta')
 ax3.set_title("Variable Feed")
 ax3.set_xlabel("Feed Rate [mol/s]")
 ax3.set_ylabel("Dimentionless Efficiency")
 
-ax4.scatter(phenol, phenolArr, c='mediumorchid')
+ax4.scatter(phenol, phenolEff, c='mediumorchid')
 ax4.plot(phenolX, phenolY, c='mediumorchid')
 ax4.set_title("Variable Phenol Fraction")
 ax4.set_xlabel("Phenol Fraction [mol/mol]")
