@@ -6,6 +6,17 @@ from ReactorEquations import ReactorEquations
 from NumericalMethods import NumericalMethods
 import matplotlib.pyplot as plt
 
+"""
+HOW TO USE :
+
+In the section directly below, make changes to any of the parameters and simply run the program. If the 
+run successfuly converges, 3 graphs will open containing the conversion, flow and concentration with 
+respect to catalyst weigth. If the solution does not converge, e.i. the pressure drops to 0 before reaching
+25 mol/s of H2 then an error message will be printed. To best see the graphs, full screen them.
+"""
+
+
+
 ####################################################################################################################################################################
 #Run Parameters
 ####################################################################################################################################################################
