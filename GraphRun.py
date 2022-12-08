@@ -287,29 +287,6 @@ class ReactorEquations:
         Calcule le rendement globale du H2 par rapport au Ph ayant réagit
         """
         return (F_H2/(F_Ph0-F_Ph))
-    
-[{
-	"resource": "/c:/Users/samy4/OneDrive/Desktop/Year3Sem1/RxnEng/Project/GraphRun.py",
-	"owner": "_generated_diagnostic_collection_name_#3",
-	"code": {
-		"value": "reportUndefinedVariable",
-		"target": {
-			"$mid": 1,
-			"external": "https://github.com/microsoft/pyright/blob/main/docs/configuration.md#reportUndefinedVariable",
-			"path": "/microsoft/pyright/blob/main/docs/configuration.md",
-			"scheme": "https",
-			"authority": "github.com",
-			"fragment": "reportUndefinedVariable"
-		}
-	},
-	"severity": 4,
-	"message": "\"NumericalMethods\" is not defined",
-	"source": "Pylance",
-	"startLineNumber": 340,
-	"startColumn": 9,
-	"endLineNumber": 340,
-	"endColumn": 25
-}]
 
 class NumericalMethods:
     
